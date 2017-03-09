@@ -1,0 +1,27 @@
+{
+  "options": {
+    "meteorite": false,
+    "insecure": false,
+    "meteorRelease": "1.3.4.1"
+  },
+  "environments": {
+    "staging": {
+      "hostname": "wedobusinessbetter.com",
+      "port": 21212,
+      "username": "meteor",
+      "password": "Qazsxdrewazx1",
+      "deploymentDirectory": "~/directory",
+      "gitBranch": "master",
+      "taskName": "wedobusinessbetter.com"
+    },
+    "production": {
+      "hostname": "wedobusinessbetter.com",
+      "port": 21212,
+      "username": "meteor",
+      "privateKey": "~/.ssh/id_rsa",
+      "deploymentDirectory": "wedobusinessbetter.com",
+      "gitBranch": "master",
+      "taskName": "directory"
+    }
+  }
+}

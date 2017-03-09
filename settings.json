@@ -1,0 +1,14 @@
+{
+    "public": {
+        "ga": {
+            "id": "UA-80450147-1",
+            "set": {
+                "forceSSL": true,
+                "anonymizeIp": false
+            },
+            "require": {
+                "displayfeatures": true            },
+            "trackUserId": true
+        }
+    }
+}

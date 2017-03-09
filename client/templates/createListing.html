@@ -1,0 +1,36 @@
+<template name="createListing">
+
+{{#if currentUser}}
+
+  {{# autoForm collection="Listings" id="newListing" type="insert"}}
+
+    <fieldset>
+      <legend align="center">Share your knowledge with the people!</legend>
+      {{> afQuickField name='bizName'  class="grid-item bizName"}}
+      <div class="grid">
+        <fieldset class="fullWidth"><legend align="center">Details</legend>
+          {{> afQuickField name='website' class="grid-item"}}
+          {{> afQuickField name="location" class="grid-item"}}
+          {{> afQuickField name='industry' class="grid-item" style="font-size: .8em"}}
+          <br>
+          <fieldset class="fullWidth"><legend align="center">What's this all about?</legend>
+          {{> afQuickField name='socialMission' class="grid-item socialMission"}}
+                <br>
+          </fieldset>
+        </fieldset>
+      </div>
+	  </fieldset>
+    {{> reCAPTCHA}}
+  <button type="submit" class="btn btn-primary">Share</button>
+  {{/autoForm}}
+
+
+{{else}}
+	{{> register}}
+{{/if}}
+</template>
+
+
+<template name="imagePreview">
+  <a href="{{file.url}}">{{file.original.name}}</a>
+</template>
