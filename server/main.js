@@ -69,7 +69,7 @@ Listings.allow({
 
 Meteor.methods({
 
- insert: function (bizName, bizNameUrl, firstName, lastName, ownerPicture, facebookPersonal, twitterPersonal, linkedInPersonal, instagramPersonal, pinterestPersonal, facebookBusiness, twitterBusiness, linkedInBusiness, instagramBusiness, pinterestBusiness, email, phone, industry, location, website, logo, socialMission, userId, createdAt, captchaData){
+ insert: function (bizName, bizNameUrl, industry, location, website, socialMission, userId, createdAt, captchaData){
 
    var self = this;
 
@@ -86,25 +86,9 @@ Meteor.methods({
   Listings.insert({
    bizName: bizName,
    bizNameUrl: bizNameUrl,
-   firstName: firstName,
-   lastName: lastName,
-   ownerPicture: ownerPicture,
-   facebookPersonal: facebookPersonal,
-   twitterPersonal: twitterPersonal,
-   linkedInPersonal: linkedInPersonal,
-   instagramPersonal: instagramPersonal,
-   pinterestPersonal: pinterestPersonal,
-   facebookBusiness: facebookBusiness,
-   twitterBusiness: twitterBusiness,
-   linkedInBusiness: linkedInBusiness,
-   instagramBusiness: instagramBusiness,
-   pinterestBusiness: pinterestBusiness,
-   email: email,
-   phone: phone,
    website: website,
    industry: industry,
    location: location,
-   logo: logo,
    socialMission: socialMission,
    userId: userId,
    createdAt: new Date()

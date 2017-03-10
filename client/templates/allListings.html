@@ -59,15 +59,9 @@
         <col width="5%"><col width="5%">
       </colgroup>
       <tr>
-        <th colspan="12" class="bizName">{{#if focus}}<a class="" href="/profile/{{bizNameUrl}}">{{bizName}}</a>{{else}}
+        <th colspan="20" class="bizName">{{#if focus}}<a class="" href="/profile/{{bizNameUrl}}">{{bizName}}</a>{{else}}
         {{bizName}}{{/if}}</th>
-        <th colspan="8" class="contain-image logo" style="background-image: url('{{logo}}')"></th>
       </tr>
-      <tr>
-        <td colspan="6" class="contain-image ownerPic" style="background-image: url('{{ownerPicture}}')"></td>
-        <td colspan="14"><h2>{{firstName}} {{lastName}}</h2></td>
-      </tr>
-
       <tr>
         <td colspan="20" class="socialMission"><div>{{{socialMission}}} <a href="/profile/{{bizNameUrl}}" class="readmore">&#xbb;</a></div></td>
       </tr>
@@ -83,12 +77,6 @@
         none;
       {{/if}}
         "></tr>    
-      {{#if focus}}
-      <tr>
-        <td colspan="12"><a class="email" target="_blank" href="mailto:{{email}}?Subject=Keep%20Up%20the%20Good%20Work%21">{{email}}</a></td>
-        <td colspan="8"><a class="phone" href="tel:+1{{phone}}">{{phone}}</a></td>
-      </tr>
-      {{/if}}
     </table>
 
 </template>

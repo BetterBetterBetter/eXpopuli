@@ -111,34 +111,18 @@ Template.createListing.events({
 		
 		var bizName = event.target.bizName.value;
   var bizNameUrl = bizName.replace(/ /g,'-');
-		var firstName = event.target.firstName.value;
-		var lastName = event.target.lastName.value;
-  var ownerPicture = $(event.target).find('[data-schema-key="ownerPicture"]').siblings('img').attr("src");
-  var facebookPersonal = event.target.facebookPersonal.value;
-  var twitterPersonal = event.target.twitterPersonal.value;
-  var linkedInPersonal = event.target.linkedInPersonal.value;
-  var instagramPersonal = event.target.instagramPersonal.value;
-  var pinterestPersonal = event.target.pinterestPersonal.value;
-  var facebookBusiness = event.target.facebookBusiness.value;
-  var twitterBusiness = event.target.twitterBusiness.value;
-  var linkedInBusiness = event.target.linkedInBusiness.value;
-  var instagramBusiness = event.target.instagramBusiness.value;
-  var pinterestBusiness = event.target.pinterestBusiness.value;
-		var email = event.target.email.value;
-		var phone = event.target.phone.value;
 		var industry = event.target.industry.value;
   var locationLat = $(event.target).find('[data-schema-key="location"]').find('.js-lat').val();
   var locationLng = $(event.target).find('[data-schema-key="location"]').find('.js-lng').val();
   var location = [locationLat, locationLng];
 		var website = event.target.website.value;
-		var logo = $(event.target).find('[data-schema-key="logo"]').siblings('img').attr("src");
   var socialMission = event.target.socialMission.value;
 		var userId = Meteor.userId();
 		var createdAt = new Date();
   var captchaData = grecaptcha.getResponse();
 
 
-		Meteor.call("insert", bizName, bizNameUrl, firstName, lastName, ownerPicture,facebookPersonal, twitterPersonal, linkedInPersonal, instagramPersonal, pinterestPersonal, facebookBusiness, twitterBusiness, linkedInBusiness, instagramBusiness, pinterestBusiness, email, phone, industry, location, website, logo, socialMission, userId, createdAt, captchaData, function(error,result){
+		Meteor.call("insert", bizName, bizNameUrl, industry, location, website, socialMission, userId, createdAt, captchaData, function(error,result){
      grecaptcha.reset();
      if (error) {
          console.log('There was an error: ' + error.reason);
@@ -157,27 +141,9 @@ Template.createListing.events({
        });
      }
   });
-
+debugger;
 		event.target.bizName.value = "";
-		event.target.firstName.value = "";
-		event.target.lastName.value = "";
-  $(event.target).find('[data-schema-key="ownerPicture"]').parent().find('.js-af-remove-file').click();
-  event.target.facebookPersonal.value = "";
-  event.target.twitterPersonal.value = "";
-  event.target.linkedInPersonal.value = "";
-  event.target.instagramPersonal.value = "";
-  event.target.pinterestPersonal.value = "";
-  event.target.facebookBusiness.value = "";
-  event.target.twitterBusiness.value = "";
-  event.target.linkedInBusiness.value = "";
-  event.target.instagramBusiness.value = "";
-  event.target.pinterestBusiness.value = "";
-		event.target.email.value = "";
-		event.target.phone.value = "";
   event.target.industry.value = "";
-  $(event.target).find('[data-schema-key="location"]').find('.js-lng').val('');
-  $(event.target).find('[data-schema-key="location"]').find('.js-lng').val('');
-		event.target.website.value = "";
   event.target.socialMission.value = "";
   $(event.target).find('[data-schema-key="logo"]').parent().find('.js-af-remove-file').click();
      
@@ -229,25 +195,6 @@ Template.updateListing.events({
   var thisListing = Listings.findOne({_id: thisId});
   var bizName = event.target.bizName.value;
   var bizNameUrl = bizName.replace(/ /g,'-');
-  var firstName = event.target.firstName.value;
-  var lastName = event.target.lastName.value;
-  if($(event.target).find('[data-schema-key="ownerPicture"]').siblings('img').attr("src")){
-   var ownerPicture = $(event.target).find('[data-schema-key="ownerPicture"]').siblings('img').attr("src");
-  }else{
-   var ownerPicture = $(event.target).find('.oldPreviewHead').attr("src");
-  }
-  var facebookPersonal = event.target.facebookPersonal.value;
-  var twitterPersonal = event.target.twitterPersonal.value;
-  var linkedInPersonal = event.target.linkedInPersonal.value;
-  var instagramPersonal = event.target.instagramPersonal.value;
-  var pinterestPersonal = event.target.pinterestPersonal.value;
-  var facebookBusiness = event.target.facebookBusiness.value;
-  var twitterBusiness = event.target.twitterBusiness.value;
-  var linkedInBusiness = event.target.linkedInBusiness.value;
-  var instagramBusiness = event.target.instagramBusiness.value;
-  var pinterestBusiness = event.target.pinterestBusiness.value;
-  var email = event.target.email.value;
-  var phone = event.target.phone.value;
   var industry = event.target.industry.value;
   if($('.location').attr('data', 'clicked')){
    var locationLat = $(event.target).find('[data-schema-key="location"]').find('.js-lat').val();
@@ -257,18 +204,13 @@ Template.updateListing.events({
    var location = document.getElementsByClassName('location')[0].innerHTML;
   }
   var website = event.target.website.value;
-  if($(event.target).find('[data-schema-key="logo"]').siblings('img').attr("src")){
-   var logo = $(event.target).find('[data-schema-key="logo"]').siblings('img').attr("src");
-  }else{
-   var logo = $(event.target).find('.oldPreviewLogo').attr("src");
-  }
   var socialMission = event.target.socialMission.value;
   var userId = Meteor.userId();
   var createdAt = new Date();
   var _id = thisListing._id;
 
 
-  Meteor.call("update", _id, bizName, bizNameUrl, firstName, lastName, ownerPicture,facebookPersonal, twitterPersonal, linkedInPersonal, instagramPersonal, pinterestPersonal, facebookBusiness, twitterBusiness, linkedInBusiness, instagramBusiness, pinterestBusiness, email, phone, industry, location, website, logo, socialMission, userId, function(e,r){
+  Meteor.call("update", _id, bizName, bizNameUrl,industry, location, website, socialMission, userId, function(e,r){
     if (e) {
         throw new Meteor.Error();
     }
