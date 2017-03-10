@@ -110,7 +110,10 @@ Template.mapPage.onCreated(function () {
       setTimeout(function(){
         $('.socialMission > div').dotdotdot({
          after: "a.readmore"
-        }).find(':not(p,a,.socialMission > div,div.dotdotdot)').remove();
+        });
+        setTimeout(function(){
+          $('.socialMission > div').find('iframe').remove();
+         }, 111);
        }, 111);
 
       }
@@ -140,11 +143,15 @@ Template.mapPage.onCreated(function () {
 
      $('.gm-style-iw').siblings().css("display", "none");
 
-     setTimeout(function(){
-      $('.socialMission > div').dotdotdot({
-       after: "a.readmore"
-      }).find(':not(p,a)').remove();
-      }, 111);
+      setTimeout(function(){
+        $('.socialMission > div').dotdotdot({
+         after: "a.readmore"
+        });
+        setTimeout(function(){
+          $('.socialMission > div').find('iframe').remove();
+         }, 111);
+       }, 111);
+      
     }
   });
  

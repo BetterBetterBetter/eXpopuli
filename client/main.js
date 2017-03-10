@@ -316,12 +316,14 @@ Template.register.events({
 $(window).resize(function(){
 
 
- setTimeout(function(){
-   $('.socialMission > div').dotdotdot({
-    after: "a.readmore"
-   }).find(':not(p,a,.socialMission > div, div.dotdotdot)').remove();
-
-  }, 333);
+      setTimeout(function(){
+        $('.socialMission > div').dotdotdot({
+         after: "a.readmore"
+        });
+        setTimeout(function(){
+          $('.socialMission > div').find('iframe').remove();
+         }, 111);
+       }, 111);
 
 
 	if (window.location.href.indexOf("/listings") > -1){
