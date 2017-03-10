@@ -35,13 +35,8 @@ Template.mapPage.onCreated(function () {
     contentString += "    <col width=\"5%\"><col width=\"5%\">";
     contentString += "  <\/colgroup>";
     contentString += "  <tr>";
-    contentString += "    <th colspan=\"12\" class=\"bizName\"><a class=\"bizName\" href=\"\/profile\/"+listing.bizNameUrl+"\">"+listing.bizName+"<\/a>";
+    contentString += "    <th colspan=\"20\" class=\"bizName\"><a class=\"bizName\" href=\"\/profile\/"+listing.bizNameUrl+"\">"+listing.bizName+"<\/a>";
     contentString += "    <\/th>";
-    contentString += "    <th colspan=\"8\" class=\"contain-image logo\" style=\"background-image: url('"+listing.logo+"')\"><\/th>";
-    contentString += "  <\/tr>";
-    contentString += "  <tr>";
-    contentString += "    <td colspan=\"6\" class=\"contain-image ownerPic\" style=\"background-image: url('"+listing.ownerPicture+"')\"><\/td>";
-    contentString += "    <td colspan=\"14\"><h2>"+listing.firstName+" "+listing.lastName+"<\/h2><\/td>";
     contentString += "  <\/tr>";
     contentString += "  <tr>";
     contentString += "    <td colspan=\"20\" class=\"socialMission\"><div>"+listing.socialMission+" <a href=\"\/profile\/"+listing.bizNameUrl+"\" class=\"readmore\">&#xbb;<\/a><\/div><\/td>";
@@ -115,7 +110,7 @@ Template.mapPage.onCreated(function () {
       setTimeout(function(){
         $('.socialMission > div').dotdotdot({
          after: "a.readmore"
-        }).find(':not(p,a)').remove();
+        }).find(':not(p,a,.socialMission > div,div.dotdotdot)').remove();
        }, 111);
 
       }

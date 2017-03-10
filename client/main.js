@@ -141,7 +141,7 @@ Template.createListing.events({
        });
      }
   });
-debugger;
+
 		event.target.bizName.value = "";
   event.target.industry.value = "";
   event.target.socialMission.value = "";
@@ -319,7 +319,7 @@ $(window).resize(function(){
  setTimeout(function(){
    $('.socialMission > div').dotdotdot({
     after: "a.readmore"
-   }).find(':not(p,a,.socialMission > div)').remove();
+   }).find(':not(p,a,.socialMission > div, div.dotdotdot)').remove();
 
   }, 333);
 
