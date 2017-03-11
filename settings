@@ -1,0 +1,19 @@
+{
+	"apps": [{
+		"name": "expopuli",
+		"script": "./main.js",
+		"log_date_format": "YYYY-MM-DD",
+		"exec_mode": "fork_mode",
+		"env": {
+			"PORT": 3333,
+			"HTTP_FORWARDED_COUNT": 1,
+			"MONGO_URL": "mongodb://localhost:27017/expop",
+			"MONGO_OPLOG_URL": "mongodb://localhost:27017",
+			"ROOT_URL": "https://expopuli.gq/",
+			"METEOR_SETTINGS": {
+				"AWSAccessKeyId": "",
+				"AWSSecretAccessKey": "",
+			}
+		}
+	}]
+}

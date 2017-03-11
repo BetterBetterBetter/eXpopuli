@@ -1,8 +1,10 @@
 <template name="layout">
 
 <body>
+{{> mapPage}}
 	{{> nav}}
-	{{> yield}}
+
+{{>footer}}
 </body>
 
 </template>
@@ -11,13 +13,11 @@
 
 
 <template name="nav">
-	<div class="topBannerSpacer"></div>
 	<nav id="topBanner">
 		<a href="https://betterbetterbetter.org" target="_blank"><div id="b3logo" class="contain-image"></div></a>
 		<ul>
 			<li><a href="{{pathFor 'home'}}">Home</a></li>
 			<li><a href="{{pathFor 'allListings'}}">Links</a></li>
-			<li><a href="{{pathFor 'mapPage'}}">Map</a></li>
 			<li>	{{> loginButtons align="right"}}</li>
 		</ul>
 	</nav>
@@ -31,3 +31,14 @@
 </template>
 
 
+<template name="mapPage">
+
+	<div id="mapBG">
+  {{> googleMap name="mapPage" options=mapPageMapOptions}}
+	  <div id="toggle_main"><div id="open_main" class="mainbutton hidden">O</div><div id="close_main" class="mainbutton">X</div></div>
+	  <main>
+	  		{{> yield}}
+	  </main>
+	</div>
+
+</template> 

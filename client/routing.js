@@ -23,25 +23,15 @@ var SEO_options = {
     image: 'http://betterbetterbetter.org/wp-content/uploads/2015/12/common-205x205-7931.png'
   }
 };
-
+/*
 Router.plugin('seo', 
 	{defaults: SEO_options}
 	);
-
+*/
 
 Router.route('/', {
     name: 'home',
     template: 'home'
-});
-Router.route('/saturn', {
-    name: 'saturn',
-    template: 'saturn',
-    seo: {
- 	   title: {
-      text: 'Saturn Symbolism'
-    }
-  }
-
 });
 Router.route('/privacy', {
     name: 'privacy',
@@ -63,21 +53,6 @@ Router.route('/listings', {
       text: 'eX Populi'
     	}
     }
-});
-Router.route('/map', {
-    name: 'mapPage',
-    template: 'mapPage',
-    waitOn: function () {
-        Meteor.subscribe('listings');
-    },
-    action: function () {
-        this.render('mapPage', {to: 'main'});
-    },
-    seo: {
- 	   title: {
-      text: 'eX Populi Map'
-    }
-   }
 });
 Router.route('/new', {
     name: 'new',

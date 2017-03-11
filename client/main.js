@@ -142,7 +142,7 @@ Template.createListing.events({
      }
   });
 
-		event.target.bizName.value = "";
+	event.target.bizName.value = "";
   event.target.industry.value = "";
   event.target.socialMission.value = "";
   $(event.target).find('[data-schema-key="logo"]').parent().find('.js-af-remove-file').click();
@@ -267,6 +267,32 @@ Template.layout.events({
 
 
 });
+
+
+
+Template.mapPage.events({
+
+ 'click #toggle_main .mainbutton': function(event){
+    if(event.target.id === "close_main"){
+      
+    }
+    if(event.target.id === "open_main"){
+      
+    }
+    $('.mainbutton').each(function(){
+      $(this).toggleClass('hidden')
+    });
+    $('main').toggleClass('hidden');
+ }
+});
+
+
+
+
+
+
+
+
 
 
 

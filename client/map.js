@@ -1,6 +1,6 @@
 
 
-Template.mapPage.onCreated(function () {
+Template.layout.onCreated(function () {
 
 
 
