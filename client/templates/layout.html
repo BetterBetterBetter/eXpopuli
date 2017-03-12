@@ -34,8 +34,9 @@
 <template name="mapPage">
 
 	<div id="mapBG">
+	<input id="gmap_search" type="text" name="gmap_search" placeholder="Search Google Places">
   {{> googleMap name="mapPage" options=mapPageMapOptions}}
-	  <div id="toggle_main"><div id="open_main" class="mainbutton hidden">O</div><div id="close_main" class="mainbutton">X</div></div>
+	  <div id="toggle_main" class="open"><div id="open_main" class="mainbutton hidden">O</div><div id="close_main" class="mainbutton">X</div></div>
 	  <main>
 	  		{{> yield}}
 	  </main>

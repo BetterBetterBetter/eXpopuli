@@ -82,6 +82,9 @@ Template.profile.onCreated(function () {
 Template.createListing.onCreated(function () {
     this.subscribe('listings');
 });
+Template.layout.onCreated(function () {
+    this.subscribe('listings');
+});
 Template.updateListing.onCreated(function () {
      this.subscribe('listings');
   this.autorun(function() {
@@ -274,10 +277,12 @@ Template.mapPage.events({
 
  'click #toggle_main .mainbutton': function(event){
     if(event.target.id === "close_main"){
-      
+      $('#toggle_main').removeClass('open');
+      $('#toggle_main').addClass('closed');      
     }
     if(event.target.id === "open_main"){
-      
+      $('#toggle_main').removeClass('closed');
+      $('#toggle_main').addClass('open');
     }
     $('.mainbutton').each(function(){
       $(this).toggleClass('hidden')

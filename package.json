@@ -6,9 +6,11 @@
   },
   "dependencies": {
     "babel-runtime": "^6.23.0",
+    "bcrypt": "^1.0.2",
     "desandro-matches-selector": "^2.0.1",
     "ev-emitter": "^1.0.2",
     "fizzy-ui-utils": "^2.0.1",
+    "geocomplete": "^1.7.0",
     "get-size": "^2.0.2",
     "imagesloaded": "^4.1.0",
     "isotope-packery": "^2.0.0",

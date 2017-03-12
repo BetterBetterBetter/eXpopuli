@@ -13,6 +13,11 @@ Template.layout.onCreated(function () {
   var openInfoWindowMarker = {};
   var isInfoWindowHovered = "notHovered";
 
+    $("#gmap_search").geocomplete({
+      map: map.instance
+    });
+
+
   Listings.find().forEach(function(listing){
   
    var locLat = listing.location[0];
@@ -68,6 +73,12 @@ Template.layout.onCreated(function () {
        marker.setAnimation(google.maps.Animation.BOUNCE);
      }
    }
+
+
+
+
+
+
 
    map.instance.addListener('zoom_changed', function() {
      $('.gm-style-iw').siblings().css("display", "none");
@@ -190,6 +201,29 @@ Template.layout.onCreated(function () {
 
   mcOptions = {averageCenter: true, imagePath: "http://betterbetterbetter.org/wp-content/uploads/2016/06/pinkCircle"};
    mc = new MarkerClusterer(map.instance, markers, mcOptions);
+
+
+
+  var infoWindow = new google.maps.InfoWindow({map: map.instance});
+
+  // Try HTML5 geolocation.
+  if (navigator.geolocation) {
+    navigator.geolocation.getCurrentPosition(function(position) {
+      var pos = {
+        lat: position.coords.latitude,
+        lng: position.coords.longitude
+      };
+
+
+      setTimeout(function(){
+        var map = GoogleMaps.maps.mapPage.instance 
+        map.panTo(pos);
+        smoothZoom(map, 14, map.getZoom());
+      }, 1111);
+
+    });
+  }
+
 
 
 
