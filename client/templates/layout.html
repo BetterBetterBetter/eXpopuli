@@ -34,12 +34,32 @@
 <template name="mapPage">
 
 	<div id="mapBG">
-	<input id="gmap_search" type="text" name="gmap_search" placeholder="Search Google Places">
-  {{> googleMap name="mapPage" options=mapPageMapOptions}}
+		<input id="gmap_search" class="searchbar" type="text" name="gmap_search" placeholder="Map Navigation">
+		<button id="gmapbutton">GO!</button>
+  	{{> kwsearchTemplate}}
+  	{{> googleMap name="mapPage" options=mapPageMapOptions}}
 	  <div id="toggle_main" class="open"><div id="open_main" class="mainbutton hidden">O</div><div id="close_main" class="mainbutton">X</div></div>
 	  <main>
 	  		{{> yield}}
 	  </main>
 	</div>
 
+    <div id="right-panel">
+      <h2>Results</h2>
+      <ul id="places"></ul>
+      <button id="more">More results</button>
+    </div>
 </template> 
+
+<template name="kwsearchTemplate">
+
+  {{#if Template.subscriptionsReady}}
+  <select id="kw_search"  name="state[]" multiple class="searchbar" placeholder="Keyword Search">
+		{{#each listings}}<option value="{{@index}}">{{bizName}}</option>{{/each}}
+	</select>
+  {{/if}}
+
+</template>
+
+
+

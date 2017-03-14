@@ -7,7 +7,10 @@ bizName = '';
 
 
 Meteor.startup(function() {
- GoogleMaps.load({key: 'AIzaSyCcr4NUiADBaDlvymOirI_pcdEzWIkLYbg', libraries: 'places'});
+ GoogleMaps.load({
+  key: 'AIzaSyCcr4NUiADBaDlvymOirI_pcdEzWIkLYbg', 
+  language: 'en',
+  libraries: 'places'});
 
  reCAPTCHA.config({
      publickey: '6LeLvyITAAAAAMM578S1JsBUM_aXsTJRBUJBDVrf',
@@ -102,8 +105,8 @@ Template.updateListing.onCreated(function () {
       }, 2222)
     }
   });
-
 });
+
 
 
 
@@ -396,13 +399,42 @@ if (window.location.href.indexOf("/profile") > -1){
     $('[href="https://froala.com/wysiwyg-editor"]').parent().remove()
   }
  }
-
 if (window.location.href.indexOf("new") > -1){ 
  $('[href="https://froala.com/wysiwyg-editor"]').parent().remove()
   }
 
 
 
+});
+
+
+
+
+
+Template.kwsearchTemplate.onCreated(function () {
+    this.subscribe('listings');
+});
+
+Template.kwsearchTemplate.helpers({
+  listings: function(){
+
+    return Listings.find();
+  }
+});
+
+Template.kwsearchTemplate.onRendered(function(){
+
+  $(document).ready(function(){
+
+    function SelectiveKW(){
+      if($('.selectize-control.searchbar.multi.plugin-restore_on_backspace.plugin-remove_button').length){return;}else{
+        $('#kw_search').selectize({
+          plugins: ['restore_on_backspace', 'remove_button']});
+        setTimeout(SelectiveKW,333); 
+      }
+    } 
+    setTimeout(SelectiveKW,333); 
+  });
 });
 
 
