@@ -1,4 +1,234 @@
+//Global functions
 
+
+function MCSet(){
+  var map = GoogleMaps.maps.mapPage.instance;
+  var mcOptions = {averageCenter: true, imagePath: "http://betterbetterbetter.org/wp-content/uploads/2016/06/pinkCircle"};
+  mc = new MarkerClusterer(map, markers, mcOptions);
+}
+function toggleBounce(marker) {
+ if (marker.getAnimation() !== null) {
+   marker.setAnimation(null);
+ } else {
+   marker.setAnimation(google.maps.Animation.BOUNCE);
+ }
+}
+
+
+
+
+
+
+
+
+function placesAddMarker(location, name, types, icon, map) {
+
+
+   var existingPoint = false;
+    for(var i = 0; i < markers.length; i++) {
+        if (markers[i].position.equals(location)) {
+            existingPoint = true;
+            break;
+        }
+    }
+
+    if(!existingPoint){
+
+    if(types){
+      var typesProcessed = types.join(" ");
+    }
+      var contentString = "<table class=\"listing"+" ";
+      contentString += typesProcessed;
+      contentString += "\">";
+      contentString += "  <colgroup>";
+      contentString += "    <col width=\"5%\"><col width=\"5%\">";
+      contentString += "    <col width=\"5%\"><col width=\"5%\">";
+      contentString += "    <col width=\"5%\"><col width=\"5%\">";
+      contentString += "    <col width=\"5%\"><col width=\"5%\">";
+      contentString += "    <col width=\"5%\"><col width=\"5%\">";
+      contentString += "    <col width=\"5%\"><col width=\"5%\">";
+      contentString += "    <col width=\"5%\"><col width=\"5%\">";
+      contentString += "    <col width=\"5%\"><col width=\"5%\">";
+      contentString += "    <col width=\"5%\"><col width=\"5%\">";
+      contentString += "    <col width=\"5%\"><col width=\"5%\">";
+      contentString += "  <\/colgroup>";
+      contentString += "  <tr>";
+      contentString += "    <th colspan=\"20\" class=\"bizName\"><a class=\"bizName\" href=\"\/profile\/\">";
+      contentString += name;
+      contentString += "<\/a>";
+      contentString += "    <\/th>";
+      contentString += "  <\/tr>";
+      contentString += "  <tr>";
+      contentString += "    <td colspan=\"20\" class=\"socialMission\"><div> <a href=\"\/profile\/\" class=\"readmore\">&#xbb;<\/a><\/div><\/td>";
+      contentString += "  <\/tr>";
+      contentString += "<\/table>";
+
+
+
+
+     var infowindow = new google.maps.InfoWindow({
+        content: contentString
+      });
+
+     function isInfoWindowOpen(infoWindow){
+      var map = infoWindow.getMap();
+      return (map !== null && typeof map !== "undefined");
+     }
+
+
+      var image = {
+        url: icon,
+        //size: new google.maps.Size(32, 32),
+        origin: new google.maps.Point(0, 0),
+        anchor: new google.maps.Point(16, 16),
+        scaledSize: new google.maps.Size(48, 48)
+      };
+
+
+      //create marker
+      var marker = new google.maps.Marker({
+        position: location,
+        map: map,
+        title: name,
+        icon: image,
+        animation: google.maps.Animation.DROP
+      });
+      //add click listener
+     ['click','touchstart'].forEach(function(e){
+       marker.addListener(e,function(){
+
+
+       toggleBounce(marker);
+
+      if(isInfoWindowOpen(infowindow) && isInfoWindowHovered !== "hovered"){
+       infowindow.close(); 
+       isAnyinfoWindowOpen = false;
+       isInfoWindowHovered = "unclicked";
+       setTimeout(function(){
+        isInfoWindowHovered = "notHovered";
+       },2222);
+
+      }else{
+
+       if(isAnyinfoWindowOpen && !isInfoWindowOpen(infowindow)){
+        isAnyinfoWindowOpenWindow.close();
+        isAnyinfoWindowOpen = false;
+        toggleBounce(openInfoWindowMarker);
+       }
+
+        infowindow.open(map, marker);
+        isAnyinfoWindowOpen = true;
+        isInfoWindowHovered = "clicked";
+        isAnyinfoWindowOpenWindow = infowindow;
+        openInfoWindowMarker = marker;
+
+
+        $('.gm-style-iw').siblings().css("display", "none");
+
+        setTimeout(function(){
+          $('.socialMission > div').dotdotdot({
+           after: "a.readmore"
+          });
+          setTimeout(function(){
+            $('.socialMission > div').find('iframe').remove();
+           }, 111);
+         }, 111);
+
+        }
+
+       },false);
+
+      });
+
+     //mouseover listener
+      marker.addListener('mouseover',function(){
+
+        if(isInfoWindowOpen(infowindow)){
+
+        }else if(isInfoWindowHovered === "notHovered" || isInfoWindowHovered === "hovered"){
+
+        if(isAnyinfoWindowOpen){
+         isAnyinfoWindowOpenWindow.close();
+         isAnyinfoWindowOpen = false;
+        }
+
+
+         infowindow.open(map, marker);
+         isAnyinfoWindowOpen = true;
+         isInfoWindowHovered = "hovered";
+         isAnyinfoWindowOpenWindow = infowindow;
+         openInfoWindowMarker = marker;
+
+
+         $('.gm-style-iw').siblings().css("display", "none");
+
+          setTimeout(function(){
+            $('.socialMission > div').dotdotdot({
+             after: "a.readmore"
+            });
+            setTimeout(function(){
+              $('.socialMission > div').find('iframe').remove();
+             }, 111);
+           }, 111);
+          
+        }
+      });
+     
+
+      //mouseout listerner
+      marker.addListener('mouseout',function(){
+
+        if(isInfoWindowOpen(infowindow) && isInfoWindowHovered === "hovered"){
+
+         setTimeout(function(){
+         if(isAnyinfoWindowOpen && isInfoWindowHovered === "hovered"){
+          $(isAnyinfoWindowOpenWindow).addClass('o0');
+         }
+         }, 3000);
+
+        setTimeout(function(){
+         if(isAnyinfoWindowOpen && isInfoWindowHovered === "hovered"){
+          isAnyinfoWindowOpenWindow.close();
+          isAnyinfoWindowOpen = false;
+          isInfoWindowHovered = "notHovered";
+         }
+         },3333);
+
+        }else{
+
+        }
+      });
+
+     markers.push(marker);
+
+     GoogleMaps.maps.mapPage.markers = markers;
+
+
+    mcOptions = {averageCenter: true, imagePath: "http://betterbetterbetter.org/wp-content/uploads/2016/06/pinkCircle"};
+     mc = new MarkerClusterer(map, markers, mcOptions);
+
+
+
+    var infoWindow = new google.maps.InfoWindow({map: map});
+
+
+
+
+  }//end not existing
+
+}
+
+
+
+
+
+
+
+
+
+
+
+//Template creation
 
 Template.layout.onCreated(function () {
 
@@ -7,11 +237,11 @@ Template.layout.onCreated(function () {
 
  GoogleMaps.ready('mapPage', function(map) {
 
-  var markers = [];
-  var isAnyinfoWindowOpen = false;
-  var isAnyinfoWindowOpenWindow = {};
-  var openInfoWindowMarker = {};
-  var isInfoWindowHovered = "notHovered";
+   markers = [];
+   isAnyinfoWindowOpen = false;
+   isAnyinfoWindowOpenWindow = {};
+   openInfoWindowMarker = {};
+   isInfoWindowHovered = "notHovered";
 
 
 
@@ -63,13 +293,6 @@ Template.layout.onCreated(function () {
 
 
 
-   function toggleBounce(marker) {
-     if (marker.getAnimation() !== null) {
-       marker.setAnimation(null);
-     } else {
-       marker.setAnimation(google.maps.Animation.BOUNCE);
-     }
-   }
 
 
 
@@ -213,7 +436,7 @@ Template.layout.onCreated(function () {
 
 
       setTimeout(function(){
-        var map = GoogleMaps.maps.mapPage.instance 
+        var map = GoogleMaps.maps.mapPage.instance;
         map.panTo(pos);
         smoothZoom(map, 14, map.getZoom());
       }, 1111);
@@ -233,13 +456,50 @@ Template.layout.onCreated(function () {
 
 });
 
+
+
+
+
+
+
+
+
+
 Template.mapPage.rendered = function (){
 
-      $('.gm-style-iw').siblings().css("display", "none");
+  GoogleMaps.ready('mapPage', function(map) {
 
-      $(window).trigger('resize');
+    $('.gm-style-iw').siblings().css("display", "none");
+
+    $(window).trigger('resize');
+
+
+    //Marker Cluster check
+    map.instance.addListener('zoom_changed', function(){
+      MCSet();
+      setTimeout(function(){
+
+      },222);
+  });
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 /*
+//Autocomplete search
   var initAutoCompleteEstab = function() {
       var map = GoogleMaps.maps.mapPage.instance;
         var autocomplete = new google.maps.places.Autocomplete(
@@ -415,17 +675,22 @@ Template.mapPage.helpers({
 
 Template.mapPage.events({
 
- 'click #gmapbutton': function(event){
+ 'click #gmapbutton, keypress #gmap_search': function(e, template){
 
-    GoogleMaps.ready('mapPage', function(map) {
+    if (e.which === 13 || e.which === 1) {
 
+      //prep display
+      if(MAIN_DISPLAYED){
+        $('#toggle_main #close_main').trigger('click');      
+      }
+      var map = GoogleMaps.maps.mapPage;
+      var mapBounds = map.instance.getBounds();
       var marker;
       var currentLocation = map.instance.getCenter();
       var query = document.getElementById('gmap_search').value;
       var request = {
-          location: currentLocation,
-          radius: '50000',
-          keyword: query
+          keyword: query,
+          bounds: mapBounds
       };
 
         service = new google.maps.places.PlacesService(map.instance);
@@ -434,19 +699,22 @@ Template.mapPage.events({
 
       function callback(results, status) {
         console.log(results);
-        console.log(status);
+        //console.log(status);
           if (status == google.maps.places.PlacesServiceStatus.OK) {
               for (var i = 0; i < results.length; i++) {
                   var place = results[i];
                   if(!place.types[0].length){
                     place.types = 0;
                   }   
-                  placesAddMarker(place.geometry.location, place.name, place.types, map.instance);
+                  placesAddMarker(place.geometry.location, place.name, place.types, place.icon, map.instance);
               }
-          }
+            }
       }
+    }
 
-    });
+    $('.gm-style-cc').remove();
+
+
   }
 });
 
@@ -458,220 +726,3 @@ Template.mapPage.events({
 
 
 
-
-
-function placesAddMarker(location, name, types, map) {
-
-
-
-
-  var markers = [];
-  var isAnyinfoWindowOpen = false;
-  var isAnyinfoWindowOpenWindow = {};
-  var openInfoWindowMarker = {};
-  var isInfoWindowHovered = "notHovered";
-
-
-
-
-
-
-
-
-
-  if(types){
-    var typesProcessed = types.join(" ");
-  }
-    var contentString = "<table class=\"listing"+" ";
-    contentString += typesProcessed;
-    contentString += "\">";
-    contentString += "  <colgroup>";
-    contentString += "    <col width=\"5%\"><col width=\"5%\">";
-    contentString += "    <col width=\"5%\"><col width=\"5%\">";
-    contentString += "    <col width=\"5%\"><col width=\"5%\">";
-    contentString += "    <col width=\"5%\"><col width=\"5%\">";
-    contentString += "    <col width=\"5%\"><col width=\"5%\">";
-    contentString += "    <col width=\"5%\"><col width=\"5%\">";
-    contentString += "    <col width=\"5%\"><col width=\"5%\">";
-    contentString += "    <col width=\"5%\"><col width=\"5%\">";
-    contentString += "    <col width=\"5%\"><col width=\"5%\">";
-    contentString += "    <col width=\"5%\"><col width=\"5%\">";
-    contentString += "  <\/colgroup>";
-    contentString += "  <tr>";
-    contentString += "    <th colspan=\"20\" class=\"bizName\"><a class=\"bizName\" href=\"\/profile\/\">";
-    contentString += name;
-    contentString += "<\/a>";
-    contentString += "    <\/th>";
-    contentString += "  <\/tr>";
-    contentString += "  <tr>";
-    contentString += "    <td colspan=\"20\" class=\"socialMission\"><div> <a href=\"\/profile\/\" class=\"readmore\">&#xbb;<\/a><\/div><\/td>";
-    contentString += "  <\/tr>";
-    contentString += "<\/table>";
-
-
-
-
-   var infowindow = new google.maps.InfoWindow({
-      content: contentString
-    });
-
-   function isInfoWindowOpen(infoWindow){
-    var map = infoWindow.getMap();
-    return (map !== null && typeof map !== "undefined");
-   }
-
-  var marker = new google.maps.Marker({
-    position: location,
-    map: map,
-    title: name,
-    animation: google.maps.Animation.DROP
-  });
-
-
-
-   function toggleBounce(marker) {
-     if (marker.getAnimation() !== null) {
-       marker.setAnimation(null);
-     } else {
-       marker.setAnimation(google.maps.Animation.BOUNCE);
-     }
-   }
-
-
-
-
-
-
-
-   map.addListener('zoom_changed', function() {
-     $('.gm-style-iw').siblings().css("display", "none");
-     setTimeout(function(){
-      $('.gm-style-iw').siblings().css("display", "none");
-     }, 1111)
-    });
-
-   ['click','touchstart'].forEach(function(e){
-     marker.addListener(e,function(){
-
-
-     toggleBounce(marker);
-
-    if(isInfoWindowOpen(infowindow) && isInfoWindowHovered !== "hovered"){
-     infowindow.close(); 
-     isAnyinfoWindowOpen = false;
-     isInfoWindowHovered = "unclicked";
-     setTimeout(function(){
-      isInfoWindowHovered = "notHovered";
-     },2222);
-
-    }else{
-
-     if(isAnyinfoWindowOpen && !isInfoWindowOpen(infowindow)){
-      isAnyinfoWindowOpenWindow.close();
-      isAnyinfoWindowOpen = false;
-      toggleBounce(openInfoWindowMarker);
-     }
-
-      infowindow.open(map, marker);
-      isAnyinfoWindowOpen = true;
-      isInfoWindowHovered = "clicked";
-      isAnyinfoWindowOpenWindow = infowindow;
-      openInfoWindowMarker = marker;
-
-
-      $('.gm-style-iw').siblings().css("display", "none");
-
-      setTimeout(function(){
-        $('.socialMission > div').dotdotdot({
-         after: "a.readmore"
-        });
-        setTimeout(function(){
-          $('.socialMission > div').find('iframe').remove();
-         }, 111);
-       }, 111);
-
-      }
-
-     },false);
-
-    });
-
-  marker.addListener('mouseover',function(){
-
-    if(isInfoWindowOpen(infowindow)){
-
-    }else if(isInfoWindowHovered === "notHovered" || isInfoWindowHovered === "hovered"){
-
-    if(isAnyinfoWindowOpen){
-     isAnyinfoWindowOpenWindow.close();
-     isAnyinfoWindowOpen = false;
-    }
-
-
-     infowindow.open(map, marker);
-     isAnyinfoWindowOpen = true;
-     isInfoWindowHovered = "hovered";
-     isAnyinfoWindowOpenWindow = infowindow;
-     openInfoWindowMarker = marker;
-
-
-     $('.gm-style-iw').siblings().css("display", "none");
-
-      setTimeout(function(){
-        $('.socialMission > div').dotdotdot({
-         after: "a.readmore"
-        });
-        setTimeout(function(){
-          $('.socialMission > div').find('iframe').remove();
-         }, 111);
-       }, 111);
-      
-    }
-  });
- 
-
-
-  marker.addListener('mouseout',function(){
-
-    if(isInfoWindowOpen(infowindow) && isInfoWindowHovered === "hovered"){
-
-     setTimeout(function(){
-     if(isAnyinfoWindowOpen && isInfoWindowHovered === "hovered"){
-      $(isAnyinfoWindowOpenWindow).addClass('o0');
-     }
-     }, 3000);
-
-    setTimeout(function(){
-     if(isAnyinfoWindowOpen && isInfoWindowHovered === "hovered"){
-      isAnyinfoWindowOpenWindow.close();
-      isAnyinfoWindowOpen = false;
-      isInfoWindowHovered = "notHovered";
-     }
-     },3333);
-
-    }else{
-
-    }
-  });
-  
-
-
-   markers.push(marker);
-
-   GoogleMaps.maps.mapPage.markers = markers;
-
-
-
-  mcOptions = {averageCenter: true, imagePath: "http://betterbetterbetter.org/wp-content/uploads/2016/06/pinkCircle"};
-   mc = new MarkerClusterer(map.instance, markers, mcOptions);
-
-
-
-  var infoWindow = new google.maps.InfoWindow({map: map});
-
-
-
-
-
-
-}

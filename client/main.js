@@ -4,6 +4,7 @@ import { ReactiveDict } from 'meteor/reactive-dict';
 
 modalActive = false;
 bizName = '';
+MAIN_DISPLAYED = true;
 
 
 Meteor.startup(function() {
@@ -38,6 +39,16 @@ smoothZoom = function (map, max, cnt) {
 }  
 
 //helpers!
+
+Template.layout.helpers({
+  mainOverflow: function(){
+    return Template.instance().mainOverflow.get();
+  }
+});
+
+
+
+
 
 Template.registerHelper('isCurrentUser', function(userId) {
   return userId === Meteor.userId();
@@ -87,6 +98,8 @@ Template.createListing.onCreated(function () {
 });
 Template.layout.onCreated(function () {
     this.subscribe('listings');
+    this.mainOverflow = new ReactiveVar( false );
+
 });
 Template.updateListing.onCreated(function () {
      this.subscribe('listings');
@@ -269,7 +282,38 @@ Template.layout.events({
     window.location.reload()
    }
   }
- }
+ },
+
+ 'click a': function(e){
+    var href = e.target.getAttribute('href');
+    if(href.includes('profile')){
+      if(!MAIN_DISPLAYED){
+        $('#toggle_main #open_main').trigger('click');      
+      }
+    }
+    setTimeout(function(){
+      $('main').trigger('overflow');
+    },1);
+  },
+  'overflow main': function(e){
+    var mainH = $('main').height();
+    var mapH = $('.map-canvas').height();
+    var viewH = $(window).height();
+    var topOfMain = parseInt($('main').css('top').replace('px',''));
+    var mainTotal = topOfMain+mainH;
+    var mainOverflow = (mainTotal > viewH);
+    if(mainOverflow){    
+      Template.instance().mainOverflow.set(true);
+        $('html, body').animate({
+          scrollTop: $("article").offset().top
+        }, 555);
+    }else{
+      Template.instance().mainOverflow.set(false);
+    }
+
+
+
+  }
 
 
 });
@@ -281,11 +325,13 @@ Template.mapPage.events({
  'click #toggle_main .mainbutton': function(event){
     if(event.target.id === "close_main"){
       $('#toggle_main').removeClass('open');
-      $('#toggle_main').addClass('closed');      
+      $('#toggle_main').addClass('closed');
+      MAIN_DISPLAYED = false;      
     }
     if(event.target.id === "open_main"){
       $('#toggle_main').removeClass('closed');
       $('#toggle_main').addClass('open');
+      MAIN_DISPLAYED = true;
     }
     $('.mainbutton').each(function(){
       $(this).toggleClass('hidden')
@@ -293,6 +339,8 @@ Template.mapPage.events({
     $('main').toggleClass('hidden');
  }
 });
+
+
 
 
 
@@ -346,7 +394,7 @@ Template.register.events({
 });
 
 
-
+////// Resize Time!
 $(window).resize(function(){
 
 

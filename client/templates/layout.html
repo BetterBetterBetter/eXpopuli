@@ -1,10 +1,23 @@
 <template name="layout">
 
 <body>
-{{> mapPage}}
+	{{> mapPage}}
+	<main>
+		{{#if mainOverflow}}
+		
+		{{else}}
+			{{> yield}}
+		{{/if}}
+  </main>
 	{{> nav}}
-
-{{>footer}}
+	{{> footer}}
+	{{#if mainOverflow}}
+		<article>
+			{{> yield "article"}}
+		</article>
+	{{else}}
+		
+	{{/if}}
 </body>
 
 </template>
@@ -14,10 +27,9 @@
 
 <template name="nav">
 	<nav id="topBanner">
-		<a href="https://betterbetterbetter.org" target="_blank"><div id="b3logo" class="contain-image"></div></a>
+		<a href="{{pathFor 'home'}}" target="_blank"><div id="b3logo" class="contain-image"></div></a>
 		<ul>
 			<li><a href="{{pathFor 'home'}}">Home</a></li>
-			<li><a href="{{pathFor 'allListings'}}">Links</a></li>
 			<li>	{{> loginButtons align="right"}}</li>
 		</ul>
 	</nav>
@@ -34,21 +46,13 @@
 <template name="mapPage">
 
 	<div id="mapBG">
-		<input id="gmap_search" class="searchbar" type="text" name="gmap_search" placeholder="Map Navigation">
+		<input id="gmap_search" class="searchbar" type="text" name="gmap_search" placeholder="Nearby Search">
 		<button id="gmapbutton">GO!</button>
   	{{> kwsearchTemplate}}
   	{{> googleMap name="mapPage" options=mapPageMapOptions}}
 	  <div id="toggle_main" class="open"><div id="open_main" class="mainbutton hidden">O</div><div id="close_main" class="mainbutton">X</div></div>
-	  <main>
-	  		{{> yield}}
-	  </main>
 	</div>
 
-    <div id="right-panel">
-      <h2>Results</h2>
-      <ul id="places"></ul>
-      <button id="more">More results</button>
-    </div>
 </template> 
 
 <template name="kwsearchTemplate">

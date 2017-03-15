@@ -76,6 +76,9 @@ Router.route('/profile/:bizNameUrl', {
 	waitOn: function () {
     return Meteor.subscribe('listings');
   },
+  yieldTemplates: {
+    'profile': {to: 'article'}
+  },
 	data: function(){
 	    var currentBiz = this.params.bizNameUrl;
 	    return Listings.findOne({ bizNameUrl: currentBiz });
