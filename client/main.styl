@@ -75,6 +75,7 @@ html
 	
 
 body
+	position absolute
 	text-align center
 	font-size responsive
  min-font-size: 12px
@@ -84,7 +85,6 @@ body
  font-family Open Sans
 	height 100%
 	width 100%
- vertically-align()
  transition()
 
 nav#topBanner a 
@@ -109,7 +109,7 @@ ul li
 	bottom 0
 	left 0
 	right 0
-	position absolute
+	position fixed
 	display inline-flex 
 	flex-direction 
 	background rgb(10,0,10)	
@@ -304,34 +304,18 @@ li
 	+above(2)
 		font-size .75em
 
-#toggle_main, #toggle_main .mainbutton
-	&.closed
-		top 5%!important
-		right 0%!important	
- transition()
-	top 17%!important
-	right 17%!important
-	z-index 9
-	height 20px
-	width 20px
-	position absolute
-	top 0
-	right 0
- .mainbutton
- 	user-select none
- 	font-size .75em!important
-  font-family 'Fredoka One', impact
-  click-shrink()
-		padding 0!important
- #close_main
-  glossy-button red 'small'
- #open_main
-  glossy-button green 'small'
+
 	
 #mapBG
  width 100%
  height 100%
+	transition 3s height ease-in-out
+ &.shrink
+ 	height 0%!important
+ 	.map-canvas
+ 		height 0%!important
 	.map-canvas
+		transition 3s height ease-in-out
 		position absolute
 	.cluster
 		user-select none
@@ -382,7 +366,9 @@ li
 	
 .sheerBg
 	background rgb(10,0,10)	
-	background rgba(10,0,10,0.8)	
+	background rgba(10,0,10,0.8)
+	padding-left 1em
+	padding-right 1em
 	
 fieldset
 	background rgb(10,0,10)	
@@ -770,7 +756,7 @@ div.loaderScreen
 		box-shadow #777 2px 2px 2px
 
   
-#mapBG .selectize-control
+.selectize-control
 	transition()
 	width 40%
 	top 8%
@@ -787,11 +773,12 @@ div.loaderScreen
 
 #gmapbutton
 	position absolute
-	top 8%
+	top 7.5%
 	z-index 9
-	left 44%
+	left 41.5%
 	transition()
-	box-shadow #777 2px 2px 2px
+	color #000
+	font-size 44px
 	
 main
 	top 17%
@@ -799,3 +786,41 @@ main
  margin-left 17%
  margin-right 17%
  width 66%
+ 
+i
+	cursor pointer
+	
+
+
+
+
+#toggle_main
+	&.closed
+		top 13%!important
+		right 3%!important	
+ transition()
+	top 17%!important
+	right 17%!important
+	z-index 9
+	height 20px
+	width 20px
+	position absolute
+	top 0
+	right 0
+ .mainbutton
+ 	user-select none
+  click-shrink()
+		padding 0!important
+		&#open_main
+			color #4682b4
+		&#close_main
+			color #b22222
+
+#gmap_location_pullout
+	position absolute
+ bottom 5%
+ width 33%
+ left 33%
+ text-align center
+ 
+

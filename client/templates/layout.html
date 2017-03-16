@@ -1,15 +1,37 @@
 <template name="layout">
 
 <body>
-	{{> mapPage}}
-	<main>
+	<input id="gmap_search" class="searchbar" type="text" name="gmap_search" placeholder="Nearby Search">
+		<i id="gmapbutton" class="zmdi zmdi-search"></i>
+  	{{> kwsearchTemplate}}
+	<div id="mapBG" class="{{#if showMap}}
+			shrink
+		{{else}}
+			
+		{{/if}}">
+  	{{> googleMap name="mapPage" options=mapPageMapOptions}}
+	</div>
+	<main class="{{#if mainOverflow}}
+			inArticle
+		{{else}}
+			inMain
+		{{/if}}">
 		{{#if mainOverflow}}
 		
 		{{else}}
 			{{> yield}}
 		{{/if}}
   </main>
+	<div id="toggle_main" class="open">
+  	<i id="open_main" class="mainbutton hidden zmdi zmdi-plus-circle zmdi-hc-2x"></i>
+  	<i id="close_main" class="mainbutton zmdi zmdi-minus-circle zmdi-hc-2x"></i>
+	</div>
 	{{> nav}}
+	
+	{{#if showMap}}{{else}}
+	{{> locationBar}}			
+	{{/if}}
+
 	{{> footer}}
 	{{#if mainOverflow}}
 		<article>
@@ -44,13 +66,11 @@
 
 
 <template name="mapPage">
-
 	<div id="mapBG">
 		<input id="gmap_search" class="searchbar" type="text" name="gmap_search" placeholder="Nearby Search">
-		<button id="gmapbutton">GO!</button>
+		<i id="gmapbutton" class="zmdi zmdi-search"></i>
   	{{> kwsearchTemplate}}
   	{{> googleMap name="mapPage" options=mapPageMapOptions}}
-	  <div id="toggle_main" class="open"><div id="open_main" class="mainbutton hidden">O</div><div id="close_main" class="mainbutton">X</div></div>
 	</div>
 
 </template> 
@@ -67,3 +87,9 @@
 
 
 
+<template name="locationBar">
+<div id="gmap_location_pullout">
+	<i class="zmdi zmdi-globe zmdi-hc-3x"></i>
+	<input type="text" name="location" id="gmap_loc" placeholder="Find Address...">
+</div>
+</template>
