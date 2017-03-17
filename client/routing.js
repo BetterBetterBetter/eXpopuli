@@ -199,6 +199,26 @@ Router.route('/profile/edit/:bizNameUrl', {
   }
 });
 
+Router.route('/url/:url', {
+  name: 'urlFrame',
+  template: 'urlFrame',
+  waitOn: function () {
+    return Meteor.subscribe('listings');
+  },
+  yieldTemplates: {
+    'urlFrame': {to: 'article'}
+  },
+  data: function(){
+      return this.params;
+  }
+});
+
+
+
+
+
+
+
 
 
 Router.onBeforeAction('loading');

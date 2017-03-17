@@ -17,6 +17,8 @@ rupture.enable-em-breakpoints = true
 a
 	link()
 	
+
+	
 input
  autofill(green, white)
 form .field.error
@@ -68,7 +70,7 @@ html
  background-size cover
  background-position center center
  background-repeat repeat
- transition()
+ transition 666ms all ease-in-out
 	height 100%
 	width 100%
 	color #fff
@@ -85,7 +87,7 @@ body
  font-family Open Sans
 	height 100%
 	width 100%
- transition()
+ transition 666ms all ease-in-out
 
 nav#topBanner a 
  font-size 1.15em
@@ -206,6 +208,7 @@ li
  	max-height 3em
  	font-size .65em
  	margin 0px
+ 	word-break all
   div
  	 display inline-block
  	 max-height 3em
@@ -331,7 +334,7 @@ li
 
 .gm-style-iw
 	background transparent
-	transition()
+	transition 666ms all ease-in-out
  top 0 !important
  left 0 !important
  border-radius 3em
@@ -440,10 +443,17 @@ input[name="website"], input[name="bizName"]
 	background-size contain
 	border-radius 3px
 
-.hidden
-	display none!important
- user-select none
- 
+.secret
+	opacity 0!important
+	height 0!important
+	width 0!important
+ user-select none!important
+ color transparent!important
+ background transparent!important
+	transform scale(0)
+	transition-delay height 600ms, width 600ms
+
+
 .tooltip 
  z-index 1001
  pointer-events none
@@ -491,7 +501,7 @@ input[name="website"], input[name="bizName"]
 		&:hover
 			border none
 		img
-			transition()
+			transition 666ms all ease-in-out
 			max-width 300px
 			background #E9F4E9
 		 background rgba(233, 244, 233, 0.68)
@@ -711,7 +721,7 @@ div.loaderScreen
 
 
 #login-buttons .login-button, .accounts-dialog .login-button
-	transition()
+	transition 666ms all ease-in-out
 	background rgb(132, 9, 132)
 	background rgba(132, 9, 132, 0.98)
 	border 2px outset #a000a0
@@ -738,8 +748,9 @@ div.loaderScreen
 
 
 
-
-
+#gmap_search_cont, #gmap_search_cont *
+	transition 666ms all ease-in-out
+	
 .searchbar
  z-index 9
  position absolute
@@ -757,7 +768,7 @@ div.loaderScreen
 
   
 .selectize-control
-	transition()
+	transition 666ms all ease-in-out
 	width 40%
 	top 8%
  right 3%
@@ -765,10 +776,10 @@ div.loaderScreen
  z-index 10
  position absolute
  .selectize-dropdown
- 	transition()
+ 	transition 666ms all ease-in-out
  	z-index 10
 .selectize-input
-	transition()
+	transition 666ms all ease-in-out
 	 box-shadow #777 2px 2px 2px
 
 #gmapbutton
@@ -776,7 +787,7 @@ div.loaderScreen
 	top 7.5%
 	z-index 9
 	left 41.5%
-	transition()
+	transition 666ms all ease-in-out
 	color #000
 	font-size 44px
 	
@@ -786,7 +797,7 @@ main
  margin-left 17%
  margin-right 17%
  width 66%
- 
+ transition 666ms all ease-in-out
 i
 	cursor pointer
 	
@@ -795,10 +806,16 @@ i
 
 
 #toggle_main
+	&.noMapClose, &.noMapClose #close_main
+		top 0!important
+		right 0!important
+		position fixed!important
+		font-size 2em
+		z-index 99
 	&.closed
 		top 13%!important
 		right 3%!important	
- transition()
+ transition 666ms all ease-in-out
 	top 17%!important
 	right 17%!important
 	z-index 9
@@ -808,19 +825,88 @@ i
 	top 0
 	right 0
  .mainbutton
+ 	transition 666ms all ease-in-out
+ 	display block
+ 	position absolute
  	user-select none
   click-shrink()
 		padding 0!important
 		&#open_main
-			color #4682b4
+			color #66cc00
 		&#close_main
 			color #b22222
 
 #gmap_location_pullout
 	position absolute
- bottom 5%
- width 33%
- left 33%
+ top 22.5%
+ width 0%
+ padding 0
+ left 0%
  text-align center
- 
+ transition 666ms all ease-in-out
+ & *
+ 	transition 666ms all ease-in-out
+ 	padding 0
+ 	left 0%
+  top 22.5%
+ 	position absolute
+ 	width 0%
+ i
+ 	text-align right
+ 	color #66cc00
+ input
+	 width 0%
+ &.active
+ 	width 60%
+ 	input
+ 	 width 60%
+ 	 padding .45em
+ 	i
+ 		width 70%
+ 		color #b22222
 
+
+article
+	transition 666ms all ease-in-out
+	
+
+#urlbar_container
+	bottom 8%
+	position absolute
+	
+#urlFrameContainer
+	width 100%
+	height 100%
+	#urlFrame
+		width 100%
+	 height 960px
+	 height 100vh
+
+#urlbar_container
+	position absolute
+ bottom 13% 
+ width 0%
+ padding 0
+ left 0%
+ text-align center
+ transition 666ms all ease-in-out
+ & *
+ 	transition 666ms all ease-in-out
+ 	padding 0
+ 	left 0%
+  top 22.5%
+ 	position absolute
+ 	width 0%
+ i
+ 	text-align right
+ 	color #66cc00
+ input
+	 width 0%
+ &.active
+ 	width 60%
+ 	input
+ 	 width 60%
+ 	 padding .45em
+ 	i
+ 		width 70%
+ 		color #b22222

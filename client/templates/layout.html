@@ -1,47 +1,44 @@
 <template name="layout">
 
 <body>
-	<input id="gmap_search" class="searchbar" type="text" name="gmap_search" placeholder="Nearby Search">
-		<i id="gmapbutton" class="zmdi zmdi-search"></i>
+	<div id="gmap_search_cont" class="{{#unless showMap}} secret {{/unless}}">
+		<input id="gmap_search" class="{{#unless showMap}} secret {{/unless}} searchbar" type="text" name="gmap_search" placeholder="Nearby Search">
+		<i id="gmapbutton" class="{{#unless showMap}} secret {{/unless}} zmdi zmdi-search"></i>
+	</div>
   	{{> kwsearchTemplate}}
-	<div id="mapBG" class="{{#if showMap}}
-			shrink
-		{{else}}
-			
-		{{/if}}">
+	<div id="mapBG" class="{{#unless showMap}} shrink	{{/unless}}">
   	{{> googleMap name="mapPage" options=mapPageMapOptions}}
 	</div>
-	<main class="{{#if mainOverflow}}
-			inArticle
-		{{else}}
-			inMain
-		{{/if}}">
-		{{#if mainOverflow}}
-		
-		{{else}}
+
+	<main class=" {{#unless showingInMain}} secret {{/unless}} ">
 			{{> yield}}
-		{{/if}}
-  </main>
-	<div id="toggle_main" class="open">
-  	<i id="open_main" class="mainbutton hidden zmdi zmdi-plus-circle zmdi-hc-2x"></i>
+  </main>	
+
+	<div id="toggle_main" class="open {{#unless showMap}} noMapClose {{/unless}}">
+  	<i id="open_main" class="mainbutton secret zmdi zmdi-plus-circle zmdi-hc-2x"></i>
   	<i id="close_main" class="mainbutton zmdi zmdi-minus-circle zmdi-hc-2x"></i>
 	</div>
 	{{> nav}}
 	
-	{{#if showMap}}{{else}}
-	{{> locationBar}}			
-	{{/if}}
+	<div id="gmap_location_pullout" class="{{#unless showMap}} secret {{/unless}}">
+		<i id="gmap_loc_i" class=" zmdi zmdi-globe-alt zmdi-hc-3x"></i>
+		<input type="text" name="location" class="" id="gmap_loc" placeholder="Find Address...">
+	</div>	
+
+
+	<div id="urlbar_container" class="{{#unless showMap}} secret {{/unless}}">
+		<i id="urlbar_i" class=" zmdi zmdi-flare zmdi-hc-3x"></i>
+		<input type="text" name="location" class="" id="urlbar" placeholder="Enter URL..." value="{{url}}">
+	</div>	
+
+
 
 	{{> footer}}
-	{{#if mainOverflow}}
-		<article>
+		<article class="{{#if showMap}} secret {{/if}}">
 			{{> yield "article"}}
 		</article>
-	{{else}}
-		
-	{{/if}}
+ 
 </body>
-
 </template>
 
 
@@ -85,11 +82,3 @@
 
 </template>
 
-
-
-<template name="locationBar">
-<div id="gmap_location_pullout">
-	<i class="zmdi zmdi-globe zmdi-hc-3x"></i>
-	<input type="text" name="location" id="gmap_loc" placeholder="Find Address...">
-</div>
-</template>

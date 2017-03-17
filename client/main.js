@@ -4,7 +4,13 @@ import { ReactiveDict } from 'meteor/reactive-dict';
 
 modalActive = false;
 bizName = '';
-MAIN_DISPLAYED = true;
+
+
+
+
+VIEW_HEIGHT = $(window).height();
+
+
 
 
 Meteor.startup(function() {
@@ -347,14 +353,27 @@ Template.layout.helpers({
     var mainDisplayed = Template.instance().mainDisplayed.get();
 
   if(mainOverflow&&mainDisplayed){
-      return true;
+      return false;
     }else if(mainOverflow&&!mainDisplayed){
-      return false;
+      return true;
     }else if(!mainOverflow&&mainDisplayed){
-      return false;
+      return true;
     }else if(!mainOverflow&&!mainDisplayed){
-      return false;
+      return true;
     }
+  },
+  showingInMain: function(){
+    var mainOverflow = Template.instance().mainOverflow.get();
+    var mainDisplayed = Template.instance().mainDisplayed.get();
+    console.log('mainOverflow: '+ mainOverflow);
+    console.log('mainDisplayed: '+ mainDisplayed);
+
+    if(!mainOverflow&&mainDisplayed){
+      console.log('showingInMain true');
+      return true;
+    }else{
+      console.log('showingInMain false');
+      return false;}
   }
 
 });
@@ -403,7 +422,8 @@ Template.updateListing.helpers({
 Template.layout.onCreated(function () {
     this.subscribe('listings');
     this.mainOverflow = new ReactiveVar( false );
-    this.mainDisplayed = new ReactiveVar( false );
+    this.mainDisplayed = new ReactiveVar( true );
+
 
 
 
@@ -612,14 +632,48 @@ Template.layout.onCreated(function () {
         smoothZoom(map, 14, map.getZoom());
       }, 1111);
 
+
+
+      ///fill address bar
+    geocoder = new google.maps.Geocoder();
+
+    geocoder.geocode({'latLng': pos}, function(results, status) {
+      if (status == google.maps.GeocoderStatus.OK) {
+      //console.log(results)
+        if (results[1]) {
+            for (var i=0; i<results[0].address_components.length; i++) {
+            for (var b=0;b<results[0].address_components[i].types.length;b++) {
+
+            //there are different types that might hold a city admin_area_lvl_1 usually does in come cases looking for sublocality type will be more appropriate
+                if (results[0].address_components[i].types[b] == "administrative_area_level_1") {
+                    //this is the object you are looking for
+                    city= results[0].address_components[i];
+                    break;
+                }
+            }
+        }
+
+  var locationInput = document.getElementById('gmap_loc'); 
+  locationInput.value =results[0].formatted_address;
+
+
+        } 
+      }
+    });
+
+
+
+
+
+
+
+
+
+
+
+
     });
   }
-
-
-
-
-
-
 
 
  });
@@ -839,12 +893,25 @@ Template.updateListing.events({
 
 Template.layout.events({
 
+  'click #urlbar_i, keypress #urlbar': function(e, template){
+
+    if (e.which === 13) {
+
+      var urlAppend = document.getElementById('urlbar').value;
+      Router.go('/url/'+urlAppend);
+      
+
+
+    }
+  },
+
+
   'click #gmapbutton, keypress #gmap_search': function(e, template){
 
     if (e.which === 13 || e.which === 1) {
 
       //prep display
-      if(MAIN_DISPLAYED){
+      if(Template.instance().mainDisplayed.get()){
         $('#toggle_main #close_main').trigger('click');      
       }
       var map = GoogleMaps.maps.mapPage;
@@ -902,11 +969,12 @@ Template.layout.events({
   }
  },
 
+
  'click a': function(e){
     var href = e.target.getAttribute('href');
     if(href.length){
       if(href.includes('profile')){
-        if(!MAIN_DISPLAYED){
+        if(!Template.instance().mainDisplayed.get()){
           $('#toggle_main #open_main').trigger('click');      
         }
       }
@@ -915,15 +983,17 @@ Template.layout.events({
       $('main').trigger('overflow');
     },1);
   },
+
+
+
   'overflow main': function(e){
     var mainH = $('main').height();
     var articleH = $('article').height();
     var mapH = $('.map-canvas').height();
-    var viewH = $(window).height();
     var topOfMain = parseInt($('main').css('top').replace('px',''));
     var mainTotal = topOfMain+mainH;
     var articleTotal = topOfMain+articleH;
-    var mainOverflow = ( (mainTotal>viewH)||(articleTotal>viewH) );
+    var mainOverflow = ( (mainTotal>VIEW_HEIGHT)||(articleTotal>VIEW_HEIGHT) );
     if(mainOverflow){
       Template.instance().mainOverflow.set(true);
     }else{
@@ -947,10 +1017,29 @@ Template.layout.events({
       Template.instance().mainDisplayed.set(true);
     }
     $('.mainbutton').each(function(){
-      $(this).toggleClass('hidden')
+      $(this).toggleClass('secret')
     });
-    $('main').toggleClass('hidden');
- }
+
+    setTimeout(function(){
+      $('main').trigger('overflow');
+    },1);
+        setTimeout(function(){
+      $('main').trigger('overflow');
+    },111);
+            setTimeout(function(){
+      $('main').trigger('overflow');
+    },1111);
+
+ },
+
+
+  'click #gmap_loc_i': function(e){
+    $(e.target).parent().toggleClass('active');
+  },
+  'click #urlbar_i': function(e){
+    $(e.target).parent().toggleClass('active');
+  }
+
 
 
 });
@@ -1016,19 +1105,24 @@ Template.register.events({
 $(window).resize(function(){
 
 
+  setTimeout(function(){
+    $('main').trigger('overflow');
+  },1);
+
+  setTimeout(function(){
+    $('#urlFrameContainer').height(VIEW_HEIGHT);
+    $('#urlFrame').height(VIEW_HEIGHT);
+  },1);
+
+
+  setTimeout(function(){
+    $('.socialMission > div').dotdotdot({
+     after: "a.readmore"
+    });
     setTimeout(function(){
-      $('main').trigger('overflow');
-    },1);
-
-
-      setTimeout(function(){
-        $('.socialMission > div').dotdotdot({
-         after: "a.readmore"
-        });
-        setTimeout(function(){
-          $('.socialMission > div').find('iframe').remove();
-         }, 111);
-       }, 111);
+      $('.socialMission > div').find('iframe').remove();
+     }, 111);
+   }, 111);
 
 
 	if (window.location.href.indexOf("/listings") > -1){
@@ -1137,4 +1231,5 @@ Template.layout.rendered = function (){
 
   });
 }
+
 

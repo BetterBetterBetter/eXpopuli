@@ -54,6 +54,7 @@
               (place.address_components[1] && place.address_components[1].short_name || ''),
               (place.address_components[2] && place.address_components[2].short_name || '')
             ].join(' ');
+            console.log(address);
           }
 
         });
