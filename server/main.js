@@ -11,6 +11,30 @@ Meteor.startup(function(){
 
 
 
+
+Invites.config({
+  from: "MyApp <notifications@myapp.io>",
+  inviteRequest: {
+      subject: "Thanks for requesting an invitation to MyApp Beta",
+      body: "Thanks for your interest in MyApp! We'll let you know when you've been invited."
+    },
+    invite: {
+      subject: "Welcome to MyApp Beta",
+      body: "You've been invited to MyApp!"
+    }
+});
+
+
+
+
+
+
+
+
+
+
+
+
   Meteor.publish("listings", function(){
    //Meteor._sleepForMs(5000);
    return Listings.find({}, {

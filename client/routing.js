@@ -31,11 +31,17 @@ Router.plugin('seo',
 
 Router.route('/', {
     name: 'home',
-    template: 'home'
+    template: 'home',
+    yieldTemplates: {
+      'home': {to: 'article'}
+    }
 });
 Router.route('/privacy', {
     name: 'privacy',
     template: 'privacy',
+    yieldTemplates: {
+      'privacy': {to: 'article'}
+    },
     seo: {
  	   title: {
       text: 'Privacy'
@@ -48,6 +54,9 @@ Router.route('/listings', {
     subscriptions: function(){
     	return Meteor.subscribe("listings");
     },
+    yieldTemplates: {
+      'allListings': {to: 'article'}
+    },
     seo: {
  	   title: {
       text: 'eX Populi'
@@ -56,19 +65,37 @@ Router.route('/listings', {
 });
 Router.route('/new', {
     name: 'new',
-    template: 'createListing',
-    waitOn: function () {
-        Meteor.subscribe('images');
+    template: 'creatListing',
+    subscriptions: function(){
+      return Meteor.subscribe("listings");
     },
-    action: function () {
-        this.render('createListing', {to: 'main'});
+    yieldTemplates: {
+      'skipMain': {to: 'main'},
+      'createListing': {to: 'article'}
     },
     seo: {
- 	   title: {
+     title: {
       text: 'New Listing'
-    	}
-  	}
+      }
+    }
 });
+
+
+Router.route('/places/:placeId', {
+  name: 'places',
+  template: 'places',
+  waitOn: function () {
+    return Meteor.subscribe('listings');
+  },
+  yieldTemplates: {
+    'places': {to: 'article'}
+  },
+  data: function(){
+    return this.params.placeId;
+    }
+});
+
+
 
 Router.route('/profile/:bizNameUrl', {
 	name: 'profile',
@@ -147,6 +174,9 @@ Router.route('/profile/edit/:bizNameUrl', {
 	    return Listings.findOne({ bizNameUrl: currentBiz });
 	  }
 	},
+  yieldTemplates: {
+    'updateListing': {to: 'article'}
+  },
   seo: {
     title: function() {
       return this.data().bizName;
@@ -213,7 +243,19 @@ Router.route('/url/:url', {
   }
 });
 
-
+Router.route('/invites', {
+    /*onBeforeAction: function(){
+      if(!Meteor.userId() || !Meteor.user().registered_emails) {
+        this.render('notfound');
+      } else if(Meteor.user().registered_emails[0].address == "my@email.com"){
+        this.next();
+      }
+    },*/
+  template: 'inviteAdmin',
+  yieldTemplates: {
+    'urlFrame': {to: 'article'}
+  }
+});
 
 
 

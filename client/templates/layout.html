@@ -5,7 +5,30 @@
 		<input id="gmap_search" class="{{#unless showMap}} secret {{/unless}} searchbar" type="text" name="gmap_search" placeholder="Nearby Search">
 		<i id="gmapbutton" class="{{#unless showMap}} secret {{/unless}} zmdi zmdi-search"></i>
 	</div>
-  	{{> kwsearchTemplate}}
+
+
+	{{#if Template.subscriptionsReady}}
+	  <select id="kw_tier1"  name="kw1[]" multiple class="searchbar kw1" placeholder="Keyword filter...">
+			{{#each listings}}
+				<option value="{{bizName}}">{{bizName}}</option>
+			{{/each}}
+		</select>
+		<select id="kw_tier2"  name="kw2[]" multiple class="searchbar kw2 secret" placeholder="Keyword filter...">
+			{{#each listings}}
+				<option value="{{bizName}}">{{bizName}}</option>
+			{{/each}}
+		</select>
+		<select id="kw_tier3"  name="kw3[]" multiple class="searchbar kw3 secret" placeholder="Keyword filter...">
+			{{#each listings}}
+				<option value="{{bizName}}">{{bizName}}</option>
+			{{/each}}
+		</select>
+  {{/if}}
+
+
+
+
+
 	<div id="mapBG" class="{{#unless showMap}} shrink	{{/unless}}">
   	{{> googleMap name="mapPage" options=mapPageMapOptions}}
 	</div>
@@ -14,7 +37,7 @@
 			{{> yield}}
   </main>	
 
-	<div id="toggle_main" class="open {{#unless showMap}} noMapClose {{/unless}}">
+	<div id="toggle_main" class="{{#if mainDisplayed}}displayed{{/if}} {{#unless showMap}} noMapClose {{/unless}}">
   	<i id="open_main" class="mainbutton secret zmdi zmdi-plus-circle zmdi-hc-2x"></i>
   	<i id="close_main" class="mainbutton zmdi zmdi-minus-circle zmdi-hc-2x"></i>
 	</div>
@@ -26,9 +49,9 @@
 	</div>	
 
 
-	<div id="urlbar_container" class="{{#unless showMap}} secret {{/unless}}">
+	<div id="urlbar_container" class="">
 		<i id="urlbar_i" class=" zmdi zmdi-flare zmdi-hc-3x"></i>
-		<input type="text" name="location" class="" id="urlbar" placeholder="Enter URL..." value="{{url}}">
+		<input type="text" name="location" class="" id="urlbar" placeholder="Enter URL..." value="{{currentURLiFramed}}">
 	</div>	
 
 
@@ -66,19 +89,13 @@
 	<div id="mapBG">
 		<input id="gmap_search" class="searchbar" type="text" name="gmap_search" placeholder="Nearby Search">
 		<i id="gmapbutton" class="zmdi zmdi-search"></i>
-  	{{> kwsearchTemplate}}
   	{{> googleMap name="mapPage" options=mapPageMapOptions}}
 	</div>
 
 </template> 
 
-<template name="kwsearchTemplate">
-
-  {{#if Template.subscriptionsReady}}
-  <select id="kw_search"  name="state[]" multiple class="searchbar" placeholder="Keyword Search">
-		{{#each listings}}<option value="{{@index}}">{{bizName}}</option>{{/each}}
-	</select>
-  {{/if}}
+<template name="skipMain">
+	
+	<div id="skipMain" style="height: 9000px"></div>
 
 </template>
-

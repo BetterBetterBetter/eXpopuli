@@ -53,7 +53,7 @@ smoothZoom = function (map, max, cnt) {
             google.maps.event.removeListener(z);
             smoothZoom(map, max, cnt + 1);
         });
-        setTimeout(function(){map.setZoom(cnt)}, 333); 
+        setTimeout(function(){map.setZoom(cnt)}, 111); 
     }
 }  
 
@@ -73,12 +73,144 @@ function toggleBounce(marker) {
 
 
 
+function kwChange(){
+  var container = this.$wrapper;
+  var items = this.items;
+  var id = this.$input.attr('id');
+  var idNum = parseInt(id.match(/\d+$/)[0]);
+  var twoHidden = $('.kw2').hasClass('secret');
+  var threeHidden = $('.kw3').hasClass('secret');
+
+  if(this.items.length){
+
+    if(idNum === 1){       
+      if( twoHidden ){
+        $('.kw2').toggleClass('secret');
+      }
+    }else if(idNum === 2){
+     if( threeHidden ){
+        $('.kw3').toggleClass('secret');
+      }
+    }else if(idNum === 3){
+
+    }
+
+  }else{
+    
+    if(idNum === 1){
+      this.clear();       
+      if( !twoHidden ){
+        $('.kw2').toggleClass('secret');
+      }
+      if( !threeHidden ){
+        $('.kw3').toggleClass('secret');
+      }
+    }else if(idNum === 2){
+     if( !threeHidden ){
+        $('.kw3').toggleClass('secret');
+      }
+    }else if(idNum === 3){
+
+    }
+
+  }
+
+
+  setTimeout(kwLines, 1111);
+
+
+}
+
+
+function createLine(x1,y1, x2,y2){
+  var length = Math.sqrt((x1-x2)*(x1-x2) + (y1-y2)*(y1-y2));
+  var angle  = Math.atan2(y2 - y1, x2 - x1) * 180 / Math.PI;
+  var transform = 'rotate('+angle+'deg)';
+
+  var line = $('<div>')
+        .appendTo('body')
+        .addClass('line')
+        .css({
+          'position': 'absolute',
+          'transform': transform
+        })
+        .width(length)
+        .offset({left: x1, top: y1});
+
+    return line;
+}
 
 
 
 
+function kwLines(){
 
-function placesAddMarker(location, name, types, icon, map) {
+  $('.line').remove();
+  $('.kw1 .item').each(function(i){
+    var rect1 = $(this)[0].getBoundingClientRect();
+    var xOffset1 = rect1.width/2;
+    var yOffset1 = rect1.height/2;
+    var x1 = rect1.left + xOffset1;
+    var y1 = rect1.top + yOffset1;
+
+    $('.kw2 .item').each(function(i){
+      var rect2 = $(this)[0].getBoundingClientRect();
+      var xOffset2 = rect2.width/2;
+      var yOffset2 = rect2.height/2;
+      var x2 = rect2.left + xOffset2;
+      var y2 = rect2.top + yOffset2;
+      createLine(x1,y1,x2,y2);
+
+      $('.kw3 .item').each(function(i){
+        var rect4 = $(this)[0].getBoundingClientRect();
+        var xOffset4 = rect4.width/2;
+        var yOffset4 = rect4.height/2;
+        var x4 = rect4.left + xOffset4;
+        var y4 = rect4.top + yOffset4;
+        createLine(x2,y2,x4,y4);
+      });
+
+    }); 
+
+  });
+
+/*
+  $('.kw2 .item').each(function(i){
+    var rect3 = $(this)[0].getBoundingClientRect();
+    var xOffset3 = rect3.width/2;
+    var yOffset3 = rect3.height/2;
+    var x3 = rect3.left + xOffset3;
+    var y3 = rect3.top + yOffset3;
+
+    $('.kw3 .item').each(function(i){
+      var rect4 = $(this)[0].getBoundingClientRect();
+      var xOffset4 = rect4.width/2;
+      var yOffset4 = rect4.height/2;
+      var x4 = rect4.left + xOffset4;
+      var y4 = rect4.top + yOffset4;
+      createLine(x3,y3,x4,y4);
+    });
+
+  });
+*/
+}
+
+
+
+function placesDetail (place, status) {
+  console.log(place);
+  console.log(status);
+  if (status === google.maps.places.PlacesServiceStatus.OK) {
+debugger;
+    return place;
+  }else{
+    Router.go('/');
+  }
+}
+
+
+
+function placesAddMarker(location, name, id, types, icon, map) {
 
 
    var existingPoint = false;
@@ -94,6 +226,8 @@ function placesAddMarker(location, name, types, icon, map) {
     if(types){
       var typesProcessed = types.join(" ");
     }
+    var placeURL = name.replace(/ /g,'-');
+
       var contentString = "<table class=\"listing"+" ";
       contentString += typesProcessed;
       contentString += "\">";
@@ -110,13 +244,13 @@ function placesAddMarker(location, name, types, icon, map) {
       contentString += "    <col width=\"5%\"><col width=\"5%\">";
       contentString += "  <\/colgroup>";
       contentString += "  <tr>";
-      contentString += "    <th colspan=\"20\" class=\"bizName\"><a class=\"bizName\" href=\"\/profile\/\">";
+      contentString += "    <th colspan=\"20\" class=\"bizName\"><a class=\"bizName\" href=\"\/places/"+id+"\">";
       contentString += name;
       contentString += "<\/a>";
       contentString += "    <\/th>";
       contentString += "  <\/tr>";
       contentString += "  <tr>";
-      contentString += "    <td colspan=\"20\" class=\"socialMission\"><div> <a href=\"\/profile\/\" class=\"readmore\">&#xbb;<\/a><\/div><\/td>";
+      contentString += "    <td colspan=\"20\" class=\"socialMission\"><div> <a href=\"\/places/"+id+"\" class=\"readmore\">&#xbb;<\/a><\/div><\/td>";
       contentString += "  <\/tr>";
       contentString += "<\/table>";
 
@@ -327,8 +461,22 @@ function placesAddMarker(location, name, types, icon, map) {
 
 //helpers!
 
+
+
+
+
 Template.layout.helpers({
 
+  listings: function(){
+    return Listings.find();
+  },
+
+  currentURLiFramed: function(){
+    if(location.pathname.includes('/url/')){
+      var urlIframe = location.pathname.replace('/url/','');
+      return urlIframe;
+    }else{return "";}
+  },
   mainOverflow: function(){
     return Template.instance().mainOverflow.get();
   },
@@ -398,25 +546,32 @@ Template.profile.helpers({
   }
 });
 
-
-Template.updateListing.helpers({
- listings: function(){
-  return Listings.find();
- },
- findListing: function(){
-    var currentListing = this.bizName;
-    return Listings.find()
-  },
-  socialMissionUpdate: function(){
-   var html = this.socialMission;
-   return html;
-  }
-});
+ 
 
 
 
 
+Template.places.data = function(){
+    var map = GoogleMaps.maps.mapPage.instance;
+    var placeId = location.pathname.replace('/places/','');
+    var placeId = this.data;
+    var service = new google.maps.places.PlacesService(map);
+    var request = {
+      placeId: placeId
+    };
+    service.getDetails(request, function(place, status){
+      console.log(place);
+      console.log(status);
+      if (status === google.maps.places.PlacesServiceStatus.OK) {
 
+
+        return place;
+      }else{
+        Router.go('/');
+      }
+    });
+
+};
 
 
 Template.layout.onCreated(function () {
@@ -573,6 +728,7 @@ Template.layout.onCreated(function () {
             $('.socialMission > div').find('iframe').remove();
            }, 111);
          }, 111);
+
         
       }
     });
@@ -616,6 +772,20 @@ Template.layout.onCreated(function () {
 
 
   var infoWindow = new google.maps.InfoWindow({map: map.instance});
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
   // Try HTML5 geolocation.
   if (navigator.geolocation) {
@@ -721,174 +891,8 @@ Template.layout.onCreated(function () {
 
 
 
-//On Created
-//template subscriptions!
-Template.profile.onCreated(function () {
-    this.subscribe('listings');
-});
-Template.createListing.onCreated(function () {
-    this.subscribe('listings');
-});
-
-Template.updateListing.onCreated(function () {
-     this.subscribe('listings');
-  this.autorun(function() {
-    if (Template.instance().subscriptionsReady()) {
-      var thisId = document.getElementsByClassName('_id')[0].innerHTML;
-      var thisListing = Listings.findOne({_id: thisId});
-      var socialMissionHtml = thisListing.socialMission;
-      var industry = thisListing.industry;
-      $('[name="socialMission"]').froalaEditor('html.set', socialMissionHtml);
-      $('[name="industry"]').val(industry);
-      
-      $(window).trigger('resize');
-      setTimeout(function(){
-       $(window).trigger('resize');
-      }, 2222)
-    }
-  });
-});
 
 
-
-
-//events!
-
-Template.createListing.events({
-	'submit': function(event){
-		
-		var bizName = event.target.bizName.value;
-  var bizNameUrl = bizName.replace(/ /g,'-');
-		var industry = event.target.industry.value;
-  var locationLat = $(event.target).find('[data-schema-key="location"]').find('.js-lat').val();
-  var locationLng = $(event.target).find('[data-schema-key="location"]').find('.js-lng').val();
-  var location = [locationLat, locationLng];
-		var website = event.target.website.value;
-  var socialMission = event.target.socialMission.value;
-		var userId = Meteor.userId();
-		var createdAt = new Date();
-  var captchaData = grecaptcha.getResponse();
-
-
-		Meteor.call("insert", bizName, bizNameUrl, industry, location, website, socialMission, userId, createdAt, captchaData, function(error,result){
-     grecaptcha.reset();
-     if (error) {
-         console.log('There was an error: ' + error.reason);
-     } else {
-       console.log('Success!');
-       Router.go('profile', { bizNameUrl: bizNameUrl });
-     }
-
-     if(r != false){
-       sitemaps.add('/sitemap.xml',function(){
-         return {
-             page: '/profile/' + bizNameUrl,
-             lastmod: new Date(),
-             changefreq: 'monthly'
-         }
-       });
-     }
-  });
-
-	event.target.bizName.value = "";
-  event.target.industry.value = "";
-  event.target.socialMission.value = "";
-  $(event.target).find('[data-schema-key="logo"]').parent().find('.js-af-remove-file').click();
-     
-    window.location.href = '../profile/'+bizNameUrl;
-
-        event.preventDefault();
-        event.stopPropagation();
-   return false;
-
-
-   setTimeout(function(bizNameUrl){
-    window.location.href = '../profile/'+bizNameUrl;
-   }, 777);
-
-	}
-
-});
-
-
-Template.updateListing.onRendered(function () {
-
- setTimeout(function(){
-   var loclatlng = document.getElementsByClassName('location')[0].innerHTML;
-   $('.controls.af-map-search-box.js-search').val(loclatlng);
-   $(window).trigger('resize');
- }, 2222);
-
- $('.js-map').click(function(){
-   $('.location').attr('data','clicked');
- });
-
-
-  setTimeout(function(){
-   $(window).trigger('resize');
-  }, 10000);
-  setTimeout(function(){
-   $(window).trigger('resize');
-  }, 20000);
-
-});
-
-
-Template.updateListing.events({
- 'submit': function(event){
-
-        event.preventDefault();
-
-  var thisId = document.getElementsByClassName('_id')[0].innerHTML;
-  var thisListing = Listings.findOne({_id: thisId});
-  var bizName = event.target.bizName.value;
-  var bizNameUrl = bizName.replace(/ /g,'-');
-  var industry = event.target.industry.value;
-  if($('.location').attr('data', 'clicked')){
-   var locationLat = $(event.target).find('[data-schema-key="location"]').find('.js-lat').val();
-   var locationLng = $(event.target).find('[data-schema-key="location"]').find('.js-lng').val();
-   var location = [locationLat, locationLng];
-  }else{
-   var location = document.getElementsByClassName('location')[0].innerHTML;
-  }
-  var website = event.target.website.value;
-  var socialMission = event.target.socialMission.value;
-  var userId = Meteor.userId();
-  var createdAt = new Date();
-  var _id = thisListing._id;
-
-
-  Meteor.call("update", _id, bizName, bizNameUrl,industry, location, website, socialMission, userId, function(e,r){
-    if (e) {
-        throw new Meteor.Error();
-    }
-    if(r != false){
-        sitemaps.add('/sitemap.xml',function(){
-            return {
-                page: '/profile/' + bizNameUrl,
-                lastmod: new Date(),
-                changefreq: 'monthly'
-            }
-        });
-      }
-  });
-
-  Router.go('profile', { bizNameUrl: bizNameUrl });
-  
-        event.stopPropagation();
-    return false;
-
- },
-
-
- 'click #delete': function(){
-  if(confirm("Delete Listing? There is no way to restore it.")){
-   Meteor.call("deleter", this._id);
-   window.location.href = '/';
-  }
- }
-
-});
 
 
 Template.layout.events({
@@ -897,9 +901,30 @@ Template.layout.events({
 
     if (e.which === 13) {
 
-      var urlAppend = document.getElementById('urlbar').value;
+      var url1 = document.getElementById('urlbar').value;
+      if(url1.includes('https://')){
+        var url2 = url1.replace('https://','');
+      }else if(url1.includes('http://')){
+        var url2 = url1.replace('http://','');
+      }else{
+        var url2 = url1;
+      }
+      var urlAppend = url2;
       Router.go('/url/'+urlAppend);
       
+      setTimeout(function(){
+        $('main').trigger('overflow');
+      }, 111)
+      setTimeout(function(){
+        $('main').trigger('overflow');
+        if( !$('#toggle_main').hasClass('displayed') ){
+
+          $('#toggle_main #close_main').trigger('click');      
+        }
+      }, 1111)
+      setTimeout(function(){
+        $('main').trigger('overflow');
+      }, 2222)
 
 
     }
@@ -937,7 +962,7 @@ Template.layout.events({
                   if(!place.types[0].length){
                     place.types = 0;
                   }   
-                  placesAddMarker(place.geometry.location, place.name, place.types, place.icon, map.instance);
+                  placesAddMarker(place.geometry.location, place.name, place.place_id, place.types, place.icon, map.instance);
               }
             }
       }
@@ -1032,7 +1057,7 @@ Template.layout.events({
 
  },
 
-
+ ///// Pullout toggles
   'click #gmap_loc_i': function(e){
     $(e.target).parent().toggleClass('active');
   },
@@ -1059,23 +1084,36 @@ Template.layout.events({
 
 
 
-Template.updateListing.onRendered(function(){
- setTimeout(function(){
-   $(window).trigger('resize');
- }, 555);
- setTimeout(function(){
-   $(window).trigger('resize');
- }, 1111);
-});
+Template.layout.onRendered(function(){
 
 
-Template.createListing.onRendered(function(){
- setTimeout(function(){
-   $(window).trigger('resize');
- }, 555);
- setTimeout(function(){
-   $(window).trigger('resize');
- }, 1111);
+  $(document).ready(function(){
+
+    function SelectiveKW(){
+      if($('.selectize-control.searchbar.multi.plugin-restore_on_backspace.plugin-remove_button').length){return;}else{
+        if($('#kw_tier1').length){
+          $('#kw_tier1').selectize({
+            maxItems: 2,
+            onChange: kwChange,
+            plugins: ['restore_on_backspace', 'remove_button']});
+          $('#kw_tier2').selectize({
+            maxItems: 2,
+            onChange: kwChange,
+            plugins: ['restore_on_backspace', 'remove_button']}); 
+          $('#kw_tier3').selectize({
+            maxItems: 2,
+            onChange: kwChange,
+            plugins: ['restore_on_backspace', 'remove_button']}); 
+        }else{
+          setTimeout(SelectiveKW,333); 
+        }
+        setTimeout(SelectiveKW,333); 
+        }
+      } 
+      setTimeout(SelectiveKW,333); 
+  });
+
+
 });
 
 
@@ -1170,36 +1208,6 @@ if (window.location.href.indexOf("new") > -1){
 
 
 
-});
-
-
-
-
-
-Template.kwsearchTemplate.onCreated(function () {
-    this.subscribe('listings');
-});
-
-Template.kwsearchTemplate.helpers({
-  listings: function(){
-
-    return Listings.find();
-  }
-});
-
-Template.kwsearchTemplate.onRendered(function(){
-
-  $(document).ready(function(){
-
-    function SelectiveKW(){
-      if($('.selectize-control.searchbar.multi.plugin-restore_on_backspace.plugin-remove_button').length){return;}else{
-        $('#kw_search').selectize({
-          plugins: ['restore_on_backspace', 'remove_button']});
-        setTimeout(SelectiveKW,333); 
-      }
-    } 
-    setTimeout(SelectiveKW,333); 
-  });
 });
 
 

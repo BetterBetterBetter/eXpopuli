@@ -28,6 +28,15 @@ Template.profile.onCreated(function() {
 });
 
 Template.profile.rendered = function(){
+        setTimeout(function(){
+        $('main').trigger('overflow');
+      }, 111)
+      setTimeout(function(){
+        $('main').trigger('overflow');
+      }, 1111)
+      setTimeout(function(){
+        $('main').trigger('overflow');
+      }, 2222)
   setTimeout(function(){
    $(window).trigger('resize');
   }, 3333);
