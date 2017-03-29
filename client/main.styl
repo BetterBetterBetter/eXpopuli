@@ -764,6 +764,11 @@ div.loaderScreen
   top 8%
   left 3%
   box-shadow #777 2px 2px 2px
+ &#saved_gmap_search
+ 	width 37%
+  top 13%
+  left 5%
+  box-shadow #777 2px 2px 2px
  &#kw_tier1
  	width 40%
  	top 8%
@@ -807,18 +812,38 @@ div.loaderScreen
 	text-align center
 .kw3
 	top 15%
-	text-align right
+	text-align right	
 
-
-#gmapbutton
+#gmapbutton, #gmapSaveButton
 	position absolute
 	top 7.5%
 	z-index 9
-	left 41.5%
 	transition 666ms all ease-in-out
 	color #000
 	font-size 44px
-	
+#gmapbutton
+		left 38%
+#gmapSaveButton
+		left 42%
+		&:hover
+		 transform scale(1.1)
+
+.gmap_saved_searches
+	left 9.5%
+	position absolute
+	top 13.5%
+	width 35%
+
+
+
+.fallAndShrink
+	opacity .3!important
+	transform scale(0) translate(0,100px)!important
+
+
+
+
+
 main
 	top 17%
  position absolute
@@ -900,7 +925,7 @@ article
 
 #urlbar_container
 	bottom 8%
-	position absolute
+	position fixed
 	
 #urlFrameContainer
 	width 100%
@@ -911,7 +936,7 @@ article
 	 height 100vh
 
 #urlbar_container
-	position absolute
+	position fixed
  bottom 13% 
  width 0%
  padding 0

@@ -41,6 +41,11 @@ Invites.config({
     sort: {createdAt: -1}
    });
   });
+  Meteor.publish("savedSearches", function(){
+   return SavedSearches.find({}, {
+    sort: {createdAt: -1}
+   });
+  });
 
 
   Listings._ensureIndex({ "_id": 1});
@@ -91,6 +96,14 @@ Listings.allow({
     }
 });
 
+SavedSearches.allow({
+  insert: function (userId, doc) {
+      return true;
+  }
+});
+
+
+
 Meteor.methods({
 
  insert: function (bizName, bizNameUrl, industry, location, website, socialMission, userId, createdAt, captchaData){
@@ -118,6 +131,59 @@ Meteor.methods({
    createdAt: new Date()
   });
 
+ },
+  insertInsecure: function (bizName, bizNameUrl, industry, location, website, socialMission, userId, createdAt){
+
+
+  Listings.insert({
+   bizName: bizName,
+   bizNameUrl: bizNameUrl,
+   website: website,
+   industry: industry,
+   location: location,
+   socialMission: socialMission,
+   userId: userId,
+   createdAt: new Date()
+  });
+
+ },
+
+
+
+ addSavedSearches: function (searchQ, userId, createdAt){
+
+  SavedSearches.insert({
+   searchQ: searchQ,
+   userId: userId,
+   createdAt: new Date()
+  });
+
  }
 
+
+
+
+
+
+
 });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+

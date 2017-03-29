@@ -3,9 +3,21 @@
 <body>
 	<div id="gmap_search_cont" class="{{#unless showMap}} secret {{/unless}}">
 		<input id="gmap_search" class="{{#unless showMap}} secret {{/unless}} searchbar" type="text" name="gmap_search" placeholder="Nearby Search">
-		<i id="gmapbutton" class="{{#unless showMap}} secret {{/unless}} zmdi zmdi-search"></i>
-	</div>
 
+		<select id="saved_gmap_search" class="gmap_saved_searches {{#unless showMap}} secret {{/unless}} searchbar" type="text" name="gmap_search" placeholder="Saved Searches">
+			{{#each savedSearches}}
+				<option value="{{searchQ}}">{{searchQ}}</option>
+			{{/each}}
+		</select>
+
+		<i id="gmapbutton" class="{{#unless showMap}} secret {{/unless}} zmdi zmdi-search"></i>
+		
+		{{#if currentUser}}
+			<i id="gmapSaveButton" class="{{#unless showMap}} secret {{/unless}} zmdi zmdi-archive"></i>
+		{{/if}}
+
+	</div>
+ 
 
 	{{#if Template.subscriptionsReady}}
 	  <select id="kw_tier1"  name="kw1[]" multiple class="searchbar kw1" placeholder="Keyword filter...">

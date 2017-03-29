@@ -5,10 +5,16 @@ import { ReactiveDict } from 'meteor/reactive-dict';
 modalActive = false;
 bizName = '';
 
-
+PATHNAME = new ReactiveVar(location.pathname);
+OVERFLOW_SET = new ReactiveVar(false);
 
 
 VIEW_HEIGHT = $(window).height();
+
+
+Meteor.setInterval(function(){
+  $('main').trigger('overflow');
+}, 4444);
 
 
 
@@ -114,12 +120,43 @@ function kwChange(){
     }
 
   }
-
-
   setTimeout(kwLines, 1111);
+}
 
+
+
+
+
+
+
+function gmap_saved_search(){
+  var container = this.$wrapper;
+  var items = this.items;
+  var id = this.$input.attr('id');
+  var searchbar = $('#gmap_search');
+
+  var eReturn = jQuery.Event("keypress");
+  eReturn.which = 13; 
+
+  if(items.length){
+    searchbar.val(items[0]).trigger(eReturn);
+
+    $('#gmapbutton').addClass('fallAndShrink');
+    setTimeout(function(){
+      $('#gmapbutton').removeClass('fallAndShrink');
+    },667);
+
+  }
 
 }
+
+
+
+
+
+
+
+
 
 
 function createLine(x1,y1, x2,y2){
@@ -196,17 +233,6 @@ function kwLines(){
 }
 
 
-
-function placesDetail (place, status) {
-  console.log(place);
-  console.log(status);
-  if (status === google.maps.places.PlacesServiceStatus.OK) {
-debugger;
-    return place;
-  }else{
-    Router.go('/');
-  }
-}
 
 
 
@@ -470,6 +496,9 @@ Template.layout.helpers({
   listings: function(){
     return Listings.find();
   },
+  savedSearches: function(){
+    return SavedSearches.find();
+  },
 
   currentURLiFramed: function(){
     if(location.pathname.includes('/url/')){
@@ -513,14 +542,14 @@ Template.layout.helpers({
   showingInMain: function(){
     var mainOverflow = Template.instance().mainOverflow.get();
     var mainDisplayed = Template.instance().mainDisplayed.get();
-    console.log('mainOverflow: '+ mainOverflow);
-    console.log('mainDisplayed: '+ mainDisplayed);
+    //console.log('mainOverflow: '+ mainOverflow);
+    //console.log('mainDisplayed: '+ mainDisplayed);
 
     if(!mainOverflow&&mainDisplayed){
-      console.log('showingInMain true');
+      //console.log('showingInMain true');
       return true;
     }else{
-      console.log('showingInMain false');
+      //console.log('showingInMain false');
       return false;}
   }
 
@@ -551,31 +580,189 @@ Template.profile.helpers({
 
 
 
-Template.places.data = function(){
-    var map = GoogleMaps.maps.mapPage.instance;
-    var placeId = location.pathname.replace('/places/','');
-    var placeId = this.data;
-    var service = new google.maps.places.PlacesService(map);
-    var request = {
-      placeId: placeId
-    };
-    service.getDetails(request, function(place, status){
-      console.log(place);
-      console.log(status);
-      if (status === google.maps.places.PlacesServiceStatus.OK) {
+Template.places.helpers({
+
+  placeDetails: function(){    
+
+    const placeTemplate = Template.instance();
+
+    PATHNAME.get();
 
 
-        return place;
-      }else{
-        Router.go('/');
-      }
-    });
+    if(GoogleMaps.maps.mapPage !== undefined){
+      var map = GoogleMaps.maps.mapPage.instance;
+      var service = new google.maps.places.PlacesService(map);
+      var id = location.pathname.replace('/places/','');
+      var req = {placeId: id}
 
-};
+
+      service.getDetails(req, function(place, status){
+
+        console.log(place);
+        //console.log(status);
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+
+          var name = place.name;
+          var addr = place.formatted_address;
+          var types = place.types.join(', ').replace(/_/g, ' ');
+          var website = place.website;
+          var location = place.geometry.location;
+
+          if(place.photo !== undefined){
+            var vh = $(window).height();
+            var imgSize = Math.trunc(vh*.33);
+            var photo = place.photos[0].getUrl({'maxWidth': imgSize, 'maxHeight': imgSize});
+            placeTemplate.photo.set(photo);
+          }
+
+
+          placeTemplate.name.set(name); 
+          placeTemplate.address.set(addr);
+          placeTemplate.types.set(types);
+          placeTemplate.location.set(location);
+          placeTemplate.website.set(website);
+
+          PATHNAME.set(location.pathname);
+
+        }else{
+          //Router.go('/');
+
+        }
+
+
+
+      });
+    }
+  },
+
+  name: function(){
+    return Template.instance().name.get();
+  },
+  address: function(){
+    return Template.instance().address.get();
+  },
+  types: function(){
+    return Template.instance().types.get();
+  },
+  photo: function(){  
+    return Template.instance().photo.get();
+  },
+  location: function(){
+    return Template.instance().location.get();
+  },
+  website: function(){  
+    return Template.instance().website.get();
+  },
+  websiteLocal: function(){
+    var url1 = Template.instance().website.get(); 
+     if(url1 !== undefined && url1.length){  
+        if(url1.includes('https://')){
+            var url2 = url1.replace('https://','');
+          }else if(url1.includes('http://')){
+            var url2 = url1.replace('http://','');
+          }else{
+            var url2 = url1;
+          }
+          var urlAppended = "//"+location.hostname + "/url/" + url2;
+          if(location.port !== 443 || location.port !== 80){
+            var urlAppended = "//"+location.hostname +":"+ location.port + "/url/" + url2;
+          }
+        return urlAppended;
+    }else{
+      return "";
+    }
+  }
+
+});
+
+
+
+Template.places.onCreated(function () {
+  this.name = new ReactiveVar( null );
+  this.address = new ReactiveVar( null );
+  this.location = new ReactiveVar( null );
+  this.photo = new ReactiveVar( null );
+  this.types = new ReactiveVar( null );
+  this.website = new ReactiveVar( null );
+});
+
+
+
+Template.places.onRendered(function(){
+
+/*
+    const placeTemplate = Template.instance();
+
+    placeTemplate.name.get();
+    placeTemplate.address.get();
+    placeTemplate.types.get();
+    placeTemplate.photo.get();
+
+
+    if(GoogleMaps.maps.mapPage !== undefined){
+      var map = GoogleMaps.maps.mapPage.instance;
+      var service = new google.maps.places.PlacesService(map);
+      var id = location.pathname.replace('/places/','');
+      var req = {placeId: id}
+
+
+      service.getDetails(req, function(place, status){
+
+        console.log(place);
+        console.log(status);
+        if (status === google.maps.places.PlacesServiceStatus.OK) {
+
+          var name = place.name;
+          var addr = place.formatted_address;
+          var types = place.types.join(', ').replace(/_/g, ' ');
+          var website = place.website;
+
+          if(place.photos[0] !== undefined){
+            var vh = $(window).height();
+            var imgSize = Math.trunc(vh*.33);
+            var photo = place.photos[0].getUrl({'maxWidth': imgSize, 'maxHeight': imgSize});
+            placeTemplate.photo.set(photo);
+          }
+
+
+          placeTemplate.name.set(name);
+          placeTemplate.address.set(addr);
+          placeTemplate.types.set(types);
+          
+          setTimeout(function(){
+            $('main').trigger('overflow');
+          },1);
+
+
+        }else{
+          //Router.go('/');
+
+          setTimeout(function(){
+            $('main').trigger('overflow');
+          },1);
+        }
+
+
+
+      });
+    }
+  */
+
+});
+
+
+
+
+
+
 
 
 Template.layout.onCreated(function () {
     this.subscribe('listings');
+    this.subscribe('savedSearches');
+
+
+
     this.mainOverflow = new ReactiveVar( false );
     this.mainDisplayed = new ReactiveVar( true );
 
@@ -897,6 +1084,48 @@ Template.layout.onCreated(function () {
 
 Template.layout.events({
 
+
+  'click #saveListingFromPlace': function(e, template){
+        e.preventDefault();
+        e.stopPropagation();
+  
+
+    var bizName = document.getElementById('name').innerHTML;
+  var bizNameUrl = bizName.replace(/ /g,'-');
+    var industry = document.getElementById('types').innerHTML;
+    var locRaw = document.getElementById('location').innerHTML.replace("(","").replace(")","").replace(" ","").split(',');
+  var locationLat = locRaw[0];
+  var locationLng = locRaw[1];
+  var location = [locationLat, locationLng];
+    var website = document.getElementById('website').innerHTML;
+  var socialMission = "";
+    var userId = Meteor.userId();
+    var createdAt = new Date();
+
+
+    Meteor.call("insertInsecure", bizName, bizNameUrl, industry, location, website, socialMission, userId, createdAt);
+
+    Router.go('profile', { bizNameUrl: bizNameUrl });
+
+  },
+
+
+  'click #gmapSaveButton': function(e, template){
+    var searchQ = $('#gmap_search').val();
+    var userId = Meteor.userId();
+    var createdAt = new Date();
+ 
+    Meteor.call("addSavedSearches", searchQ, userId, createdAt);
+
+    //$('#saved_gmap_search').selectize().data('selectize').clearOptions();
+    $('#saved_gmap_search').selectize().data('selectize').addOption([{title: searchQ}]);
+
+    $('#gmapSaveButton').addClass('fallAndShrink');
+    setTimeout(function(){
+      $('#gmapSaveButton').removeClass('fallAndShrink');
+    },667);
+  },
+
   'click #urlbar_i, keypress #urlbar': function(e, template){
 
     if (e.which === 13) {
@@ -914,17 +1143,18 @@ Template.layout.events({
       
       setTimeout(function(){
         $('main').trigger('overflow');
-      }, 111)
+        OVERFLOW_SET.set('false');
+      }, 111);
       setTimeout(function(){
         $('main').trigger('overflow');
         if( !$('#toggle_main').hasClass('displayed') ){
 
           $('#toggle_main #close_main').trigger('click');      
         }
-      }, 1111)
+      }, 1111);
       setTimeout(function(){
         $('main').trigger('overflow');
-      }, 2222)
+      }, 2222);
 
 
     }
@@ -998,7 +1228,8 @@ Template.layout.events({
  'click a': function(e){
     var href = e.target.getAttribute('href');
     if(href.length){
-      if(href.includes('profile')){
+      if( href.includes('profile') || href.includes('places') ){
+        PATHNAME.set(location.pathname);
         if(!Template.instance().mainDisplayed.get()){
           $('#toggle_main #open_main').trigger('click');      
         }
@@ -1006,24 +1237,29 @@ Template.layout.events({
     }
     setTimeout(function(){
       $('main').trigger('overflow');
+      OVERFLOW_SET.set('false');
     },1);
   },
 
 
 
   'overflow main': function(e){
-    var mainH = $('main').height();
-    var articleH = $('article').height();
-    var mapH = $('.map-canvas').height();
-    var topOfMain = parseInt($('main').css('top').replace('px',''));
-    var mainTotal = topOfMain+mainH;
-    var articleTotal = topOfMain+articleH;
-    var mainOverflow = ( (mainTotal>VIEW_HEIGHT)||(articleTotal>VIEW_HEIGHT) );
-    if(mainOverflow){
-      Template.instance().mainOverflow.set(true);
-    }else{
-      Template.instance().mainOverflow.set(false);
+    if(!OVERFLOW_SET.get()){
+      var mainH = $('main').height();
+      var articleH = $('article').height();
+      var mapH = $('.map-canvas').height();
+      var topOfMain = parseInt($('main').css('top').replace('px',''));
+      var mainTotal = topOfMain+mainH;
+      var articleTotal = topOfMain+articleH;
+      var mainOverflow = ( (mainTotal>VIEW_HEIGHT)||(articleTotal>VIEW_HEIGHT) );
+      if(mainOverflow){
+        Template.instance().mainOverflow.set(true);
+      }else{
+        Template.instance().mainOverflow.set(false);
+      }
+      OVERFLOW_SET.set('true');
     }
+
 
 
 
@@ -1050,6 +1286,7 @@ Template.layout.events({
     },1);
         setTimeout(function(){
       $('main').trigger('overflow');
+      OVERFLOW_SET.set(false);
     },111);
             setTimeout(function(){
       $('main').trigger('overflow');
@@ -1103,7 +1340,25 @@ Template.layout.onRendered(function(){
           $('#kw_tier3').selectize({
             maxItems: 2,
             onChange: kwChange,
-            plugins: ['restore_on_backspace', 'remove_button']}); 
+            plugins: ['restore_on_backspace', 'remove_button']});
+
+
+
+          var selectizeDataSelector = $('#saved_gmap_search').selectize({
+            maxItems: 1,
+            valueField: 'title',
+            labelField: 'title',
+            searchField: 'title',
+            create: false,
+            onChange: gmap_saved_search,
+            plugins: ['remove_button']}).data('selectize'); 
+
+          selectizeDataSelector.clearOptions();
+          SavedSearches.find().forEach(function(search){
+            selectizeDataSelector.addOption([{title: search.searchQ}]);
+          });
+
+
         }else{
           setTimeout(SelectiveKW,333); 
         }

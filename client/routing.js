@@ -65,7 +65,7 @@ Router.route('/listings', {
 });
 Router.route('/new', {
     name: 'new',
-    template: 'creatListing',
+    template: 'createListing',
     subscriptions: function(){
       return Meteor.subscribe("listings");
     },
@@ -88,6 +88,7 @@ Router.route('/places/:placeId', {
     return Meteor.subscribe('listings');
   },
   yieldTemplates: {
+    'places': {to: 'main'},
     'places': {to: 'article'}
   },
   data: function(){
@@ -253,7 +254,8 @@ Router.route('/invites', {
     },*/
   template: 'inviteAdmin',
   yieldTemplates: {
-    'urlFrame': {to: 'article'}
+    'skipMain': {to: 'main'},
+    'inviteAdmin': {to: 'article'}
   }
 });
 

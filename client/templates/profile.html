@@ -27,22 +27,31 @@
 
 
 <template name="places">
-
+  <form>
+    {{placeDetails}}
+    
     <fieldset class="profile">
-      <legend align="center"><img class="headerLogo" src="           " /></legend>
-      <h1 class="bizName">   {{name}}    </h1>
+      <legend align="center"><img class="headerLogo" src="{{photo}}" /></legend>
+      <a href="{{websiteLocal}}">
+        <h1 id="name" class="bizName">{{name}}</h1>
+      </a>
                     <br>
       <fieldset class="fullWidth">
                 
 
 
-        <h1><a target="_blank" href="          ">
-          
-
-        </a></h1>
+        <h3><a id="website" target="_blank" href="{{websiteLocal}}">
+            {{website}}
+        </a></h3>
+        <h5 id="address">{{address}}</h5>
       </fieldset>
-
        
+      <p id="types">{{types}}</p>
+  
+      <button id="saveListingFromPlace" type="submit" class="btn btn-primary">Save</button>
     </fieldset>
 
+    <div id="location" class="none location" data="notclicked">{{location}}</div> 
+
+  </form>
 </template>
