@@ -6,6 +6,7 @@ modalActive = false;
 bizName = '';
 
 PATHNAME = new ReactiveVar(location.pathname);
+PLACES_SEARCH = new ReactiveVar("");
 OVERFLOW_SET = new ReactiveVar(false);
 
 
@@ -554,6 +555,47 @@ Template.layout.helpers({
   }
 
 });
+
+
+
+
+Template.matchingList.helpers({
+
+  placesSearchList: function(){
+    
+    PATHNAME.get();
+    PLACES_SEARCH.get();
+
+    if(GoogleMaps.maps.mapPage.markers.length){
+      var names = [];
+      var locLats = [];
+      var locLngs = [];
+      var printArr = [];
+
+      $(GoogleMaps.maps.mapPage.markers).each(function(){
+          names.push(this.getTitle());
+          locLats.push(this.getPosition().lat());
+          locLngs.push(this.getPosition().lng());
+        
+          printArr.push("<li class=\"placesLi\" data-lat=\""+this.getPosition().lat()+"\" data-lng=\""+this.getPosition().lng()+"\" >"+this.getTitle()+"</li>");
+
+
+
+      });
+
+      var printArrToStr = printArr.join('');
+
+      return Spacebars.SafeString(printArrToStr);
+    }else{
+      return "";
+    }
+
+  }
+
+});
+
+
+
 
 
 
@@ -1124,6 +1166,7 @@ Template.layout.events({
     setTimeout(function(){
       $('#gmapSaveButton').removeClass('fallAndShrink');
     },667);
+
   },
 
   'click #urlbar_i, keypress #urlbar': function(e, template){
@@ -1165,10 +1208,10 @@ Template.layout.events({
 
     if (e.which === 13 || e.which === 1) {
 
-      //prep display
-      if(Template.instance().mainDisplayed.get()){
-        $('#toggle_main #close_main').trigger('click');      
-      }
+      //   prep display
+      //if(Template.instance().mainDisplayed.get()){
+      //  $('#toggle_main #close_main').trigger('click');      
+      //}
       var map = GoogleMaps.maps.mapPage;
       var mapBounds = map.instance.getBounds();
       var marker;
@@ -1179,8 +1222,10 @@ Template.layout.events({
           bounds: mapBounds
       };
 
-        service = new google.maps.places.PlacesService(map.instance);
-        service.nearbySearch(request, callback);
+      PLACES_SEARCH.set(query);
+
+      service = new google.maps.places.PlacesService(map.instance);
+      service.nearbySearch(request, callback);
 
 
       function callback(results, status) {
@@ -1308,7 +1353,18 @@ Template.layout.events({
 
 
 
- 
+Template.matchingList.events({
+
+  'click .placesLi, mouseover .placesLi': function(e, template){
+
+    var lat = e.target.getAttribute("data-lat");
+    var lng = e.target.getAttribute("data-lng");
+    var loc = getLatLngFromString(lat, lng);
+    GoogleMaps.maps.mapPage.instance.panTo(loc);
+
+  }
+
+});
 
 
 
@@ -1494,5 +1550,48 @@ Template.layout.rendered = function (){
 
   });
 }
+
+
+
+
+
+
+/*
+
+Template.urlFrame.onCreated(function(){
+    var uploadStarted = false;
+
+    function OnUploadComplete(state,message){       
+
+       if(state == 1)
+        alert("Success: "+message);     
+       else
+         if(state == 0 && uploadStarted)
+            alert("Error:"+( message ? message : "unknow" ));
+    }   
+});
+
+Template.urlFrame.onRendered(function(){
+
+    $("#urlFrame").error(function(e){
+      alert("connection error!");
+    });
+
+});
+
+*/
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 

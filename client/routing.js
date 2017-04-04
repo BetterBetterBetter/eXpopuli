@@ -82,7 +82,7 @@ Router.route('/new', {
 
 
 Router.route('/places/:placeId', {
-  name: 'places',
+  name: 'place',
   template: 'places',
   waitOn: function () {
     return Meteor.subscribe('listings');
@@ -96,6 +96,18 @@ Router.route('/places/:placeId', {
     }
 });
 
+
+Router.route('/places', {
+  name: 'places',
+  template: 'matchingList',
+  waitOn: function () {
+    return Meteor.subscribe('listings');
+  },
+  yieldTemplates: {
+    'matchingList': {to: 'main'},
+    'matchingList': {to: 'article'}
+  }
+});
 
 
 Router.route('/profile/:bizNameUrl', {

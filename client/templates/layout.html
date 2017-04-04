@@ -2,7 +2,7 @@
 
 <body>
 	<div id="gmap_search_cont" class="{{#unless showMap}} secret {{/unless}}">
-		<input id="gmap_search" class="{{#unless showMap}} secret {{/unless}} searchbar" type="text" name="gmap_search" placeholder="Nearby Search">
+		<input id="gmap_search" class="{{#unless showMap}} secret {{/unless}} searchbar" type="text" name="gmap_search" placeholder="Search Map">
 
 		<select id="saved_gmap_search" class="gmap_saved_searches {{#unless showMap}} secret {{/unless}} searchbar" type="text" name="gmap_search" placeholder="Saved Searches">
 			{{#each savedSearches}}
@@ -110,4 +110,11 @@
 	
 	<div id="skipMain" style="height: 9000px"></div>
 
+</template>
+
+
+<template name="matchingList">
+	<div class="sheerBg">
+		{{placesSearchList}}
+	</div>
 </template>
