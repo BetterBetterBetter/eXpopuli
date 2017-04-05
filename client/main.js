@@ -530,6 +530,7 @@ Template.layout.helpers({
     var mainOverflow = Template.instance().mainOverflow.get();
     var mainDisplayed = Template.instance().mainDisplayed.get();
 
+  /*
   if(mainOverflow&&mainDisplayed){
       return false;
     }else if(mainOverflow&&!mainDisplayed){
@@ -539,6 +540,10 @@ Template.layout.helpers({
     }else if(!mainOverflow&&!mainDisplayed){
       return true;
     }
+  */
+
+  return true;
+
   },
   showingInMain: function(){
     var mainOverflow = Template.instance().mainOverflow.get();
@@ -546,12 +551,23 @@ Template.layout.helpers({
     //console.log('mainOverflow: '+ mainOverflow);
     //console.log('mainDisplayed: '+ mainDisplayed);
 
+/*
     if(!mainOverflow&&mainDisplayed){
       //console.log('showingInMain true');
       return true;
     }else{
       //console.log('showingInMain false');
-      return false;}
+      return false;
+    }
+*/
+
+    if(mainDisplayed){
+      return true;
+    }else{
+      return false;
+    }
+
+
   }
 
 });
@@ -1263,9 +1279,8 @@ Template.layout.events({
  if(modalActive){
    modalActive = false;
    $('nav').siblings('div').css('z-index','').find('*').css('z-index','');
-   if(window.location.href.indexOf("/map") > -1){
+
     window.location.reload()
-   }
   }
  },
 

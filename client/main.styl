@@ -758,7 +758,7 @@ div.loaderScreen
 	
 .searchbar
  z-index 9
- position absolute
+ position fixed
  &#gmap_search
  	width 40%
   top 8%
@@ -784,7 +784,7 @@ div.loaderScreen
  right 3%
  color #000
  z-index 10
- position absolute
+ position fixed
  .selectize-dropdown
  	transition 666ms all ease-in-out
  	z-index 99
@@ -794,7 +794,7 @@ div.loaderScreen
 
 
 .kw1,.kw2,.kw3
- position absolute
+ position fixed
  width 35%
  right 10%
 	.selectize-input
@@ -815,7 +815,7 @@ div.loaderScreen
 	text-align right	
 
 #gmapbutton, #gmapSaveButton
-	position absolute
+	position fixed
 	top 7.5%
 	z-index 9
 	transition 666ms all ease-in-out
@@ -830,7 +830,7 @@ div.loaderScreen
 
 .gmap_saved_searches
 	left 9.5%
-	position absolute
+	position fixed
 	top 13.5%
 	width 35%
 
@@ -841,37 +841,50 @@ div.loaderScreen
 	transform scale(0) translate(0,100px)!important
 
 
-
-
+.controlMenu
+	z-index 99
 
 main
-	top 17%
+	top 19%
+	max-height 77%
  position absolute
+ overflow auto
  margin-left 17%
  margin-right 17%
  width 66%
  transition 666ms all ease-in-out
+ z-index 99
 i
 	cursor pointer
-	
-
-
-
+	z-index 99
+	 
+.screenOverlay
+	width 100%
+ height 100%
+ z-index 0
+ position fixed
+ transition 666ms all ease-in-out
+ opacity 0
+ &.obscuring
+ 	z-index 9
+ 	opacity 1
+  background rgba(34, 34, 34, 0.89)
 
 #toggle_main
+	z-index 999
 	&.noMapClose, &.noMapClose #close_main
 		top 0!important
 		right 0!important
 		position fixed!important
 		font-size 2em
-		z-index 99
+		z-index 999
 	&.closed
 		top 13%!important
 		right 3%!important	
  transition 666ms all ease-in-out
 	top 17%!important
 	right 17%!important
-	z-index 9
+	z-index 999
 	height 20px
 	width 20px
 	position absolute
@@ -890,7 +903,7 @@ i
 			color #b22222
 
 #gmap_location_pullout
-	position absolute
+	position fixed
  top 22.5%
  width 0%
  padding 0

@@ -1,36 +1,36 @@
 <template name="layout">
 
 <body>
-	<div id="gmap_search_cont" class="{{#unless showMap}} secret {{/unless}}">
-		<input id="gmap_search" class="{{#unless showMap}} secret {{/unless}} searchbar" type="text" name="gmap_search" placeholder="Search Map">
+	<div id="gmap_search_cont" class="{{#unless showMap}} secret {{/unless}} controlMenu">
+		<input id="gmap_search" class="{{#unless showMap}} secret {{/unless}} searchbar controlMenu" type="text" name="gmap_search" placeholder="Search Map">
 
-		<select id="saved_gmap_search" class="gmap_saved_searches {{#unless showMap}} secret {{/unless}} searchbar" type="text" name="gmap_search" placeholder="Saved Searches">
+		<select id="saved_gmap_search" class="gmap_saved_searches {{#unless showMap}} secret {{/unless}} searchbar controlMenu" type="text" name="gmap_search" placeholder="Saved Searches">
 			{{#each savedSearches}}
 				<option value="{{searchQ}}">{{searchQ}}</option>
 			{{/each}}
 		</select>
 
-		<i id="gmapbutton" class="{{#unless showMap}} secret {{/unless}} zmdi zmdi-search"></i>
+		<i id="gmapbutton" class="{{#unless showMap}} secret {{/unless}} zmdi zmdi-search controlMenu"></i>
 		
 		{{#if currentUser}}
-			<i id="gmapSaveButton" class="{{#unless showMap}} secret {{/unless}} zmdi zmdi-archive"></i>
+			<i id="gmapSaveButton" class="{{#unless showMap}} secret {{/unless}} zmdi zmdi-archive controlMenu"></i>
 		{{/if}}
 
 	</div>
  
 
 	{{#if Template.subscriptionsReady}}
-	  <select id="kw_tier1"  name="kw1[]" multiple class="searchbar kw1" placeholder="Keyword filter...">
+	  <select id="kw_tier1"  name="kw1[]" multiple class="controlMenu searchbar kw1" placeholder="Keyword filter...">
 			{{#each listings}}
 				<option value="{{bizName}}">{{bizName}}</option>
 			{{/each}}
 		</select>
-		<select id="kw_tier2"  name="kw2[]" multiple class="searchbar kw2 secret" placeholder="Keyword filter...">
+		<select id="kw_tier2"  name="kw2[]" multiple class="controlMenu searchbar kw2 secret" placeholder="Keyword filter...">
 			{{#each listings}}
 				<option value="{{bizName}}">{{bizName}}</option>
 			{{/each}}
 		</select>
-		<select id="kw_tier3"  name="kw3[]" multiple class="searchbar kw3 secret" placeholder="Keyword filter...">
+		<select id="kw_tier3"  name="kw3[]" multiple class="controlMenu searchbar kw3 secret" placeholder="Keyword filter...">
 			{{#each listings}}
 				<option value="{{bizName}}">{{bizName}}</option>
 			{{/each}}
@@ -42,6 +42,7 @@
 
 
 	<div id="mapBG" class="{{#unless showMap}} shrink	{{/unless}}">
+		<div id="screenOverlay" class="screenOverlay {{#if mainDisplayed}}obscuring{{/if}}"></div>
   	{{> googleMap name="mapPage" options=mapPageMapOptions}}
 	</div>
 
@@ -49,21 +50,21 @@
 			{{> yield}}
   </main>	
 
-	<div id="toggle_main" class="{{#if mainDisplayed}}displayed{{/if}} {{#unless showMap}} noMapClose {{/unless}}">
+	<div id="toggle_main" class="controlMenu {{#if mainDisplayed}}displayed{{/if}} {{#unless showMap}} noMapClose {{/unless}}">
   	<i id="open_main" class="mainbutton secret zmdi zmdi-plus-circle zmdi-hc-2x"></i>
   	<i id="close_main" class="mainbutton zmdi zmdi-minus-circle zmdi-hc-2x"></i>
 	</div>
 	{{> nav}}
 	
-	<div id="gmap_location_pullout" class="{{#unless showMap}} secret {{/unless}}">
+	<div id="gmap_location_pullout" class="controlMenu {{#unless showMap}} secret {{/unless}}">
 		<i id="gmap_loc_i" class=" zmdi zmdi-globe-alt zmdi-hc-3x"></i>
-		<input type="text" name="location" class="" id="gmap_loc" placeholder="Find Address...">
+		<input type="text" name="location" class="controlMenu" id="gmap_loc" placeholder="Find Address...">
 	</div>	
 
 
-	<div id="urlbar_container" class="">
-		<i id="urlbar_i" class=" zmdi zmdi-flare zmdi-hc-3x"></i>
-		<input type="text" name="location" class="" id="urlbar" placeholder="Enter URL..." value="{{currentURLiFramed}}">
+	<div id="urlbar_container" class="controlMenu">
+		<i id="urlbar_i" class="controlMenu zmdi zmdi-flare zmdi-hc-3x"></i>
+		<input type="text" name="location" class="controlMenu" id="urlbar" placeholder="Enter URL..." value="{{currentURLiFramed}}">
 	</div>	
 
 
