@@ -8,7 +8,7 @@ bizName = '';
 PATHNAME = new ReactiveVar(location.pathname);
 PLACES_SEARCH = new ReactiveVar("");
 OVERFLOW_SET = new ReactiveVar(false);
-
+MARKERS = new ReactiveVar();
 
 VIEW_HEIGHT = $(window).height();
 
@@ -67,7 +67,7 @@ smoothZoom = function (map, max, cnt) {
 
 function MCSet(){
   var map = GoogleMaps.maps.mapPage.instance;
-  var mcOptions = {averageCenter: true, imagePath: "http://betterbetterbetter.org/wp-content/uploads/2016/06/pinkCircle"};
+  var mcOptions = {averageCenter: true, imagePath: "http://betterbetterbetter.org/wp-content/uploads/2017/04/light_"};
   mc = new MarkerClusterer(map, markers, mcOptions);
 }
 function toggleBounce(marker) {
@@ -420,9 +420,9 @@ function placesAddMarker(location, name, id, types, icon, map) {
      markers.push(marker);
 
      GoogleMaps.maps.mapPage.markers = markers;
+     MARKERS.set(markers);
 
-
-    mcOptions = {averageCenter: true, imagePath: "http://betterbetterbetter.org/wp-content/uploads/2016/06/pinkCircle"};
+    mcOptions = {averageCenter: true, imagePath: "http://betterbetterbetter.org/wp-content/uploads/2017/04/light_"};
      mc = new MarkerClusterer(map, markers, mcOptions);
 
 
@@ -581,14 +581,15 @@ Template.matchingList.helpers({
     
     PATHNAME.get();
     PLACES_SEARCH.get();
+    var markers = MARKERS.get(); 
 
-    if(GoogleMaps.maps.mapPage.markers.length){
+    if(markers){
       var names = [];
       var locLats = [];
       var locLngs = [];
       var printArr = [];
 
-      $(GoogleMaps.maps.mapPage.markers).each(function(){
+      $(markers).each(function(){
           names.push(this.getTitle());
           locLats.push(this.getPosition().lat());
           locLngs.push(this.getPosition().lng());
@@ -1008,10 +1009,11 @@ Template.layout.onCreated(function () {
    markers.push(marker);
 
    GoogleMaps.maps.mapPage.markers = markers;
+   MARKERS.set(markers);
 
   });
 
-  mcOptions = {averageCenter: true, imagePath: "http://betterbetterbetter.org/wp-content/uploads/2016/06/pinkCircle"};
+  mcOptions = {averageCenter: true, imagePath: "http://betterbetterbetter.org/wp-content/uploads/2017/04/light_"};
    mc = new MarkerClusterer(map.instance, markers, mcOptions);
 
 
@@ -1237,6 +1239,8 @@ Template.layout.events({
           keyword: query,
           bounds: mapBounds
       };
+      const layoutTemplate = Template.instance();
+
 
       PLACES_SEARCH.set(query);
 
@@ -1254,8 +1258,18 @@ Template.layout.events({
                     place.types = 0;
                   }   
                   placesAddMarker(place.geometry.location, place.name, place.place_id, place.types, place.icon, map.instance);
+                  PATHNAME.set(location.pathname);
               }
             }
+
+        if(!layoutTemplate.mainDisplayed.get()){
+          $('#toggle_main #open_main').trigger('click');      
+        }
+
+        Router.go('places');
+
+        PATHNAME.set(location.pathname);
+
       }
     }
 
