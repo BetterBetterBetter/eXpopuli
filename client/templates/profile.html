@@ -8,9 +8,15 @@
           			{{{socialMission}}}
         <h1><a target="_blank" href="{{website}}">{{websitePretty website}}</a></h1>
       </fieldset>
+    
 
-       
-	  </fieldset>
+    {{#if Template.subscriptionsReady}}
+        <div class="comment-section">
+          {{> commentsBox id=profileId }}
+        </div>
+	  {{/if}}
+
+    </fieldset>
 
 	{{#if isCurrentUser userId}}<h1><a target="_self" href="{{pathFor 'updateListing'}}">Edit Your Link</a></h1>{{else}}
 		{{> footer}}

@@ -70,9 +70,9 @@
 
 
 	{{> footer}}
-		<article class="{{#if showMap}} secret {{/if}}">
+		<!--article class="{{#if showMap}} secret {{/if}}">
 			{{> yield "article"}}
-		</article>
+		</article-->
  
 </body>
 </template>
@@ -115,7 +115,9 @@
 
 
 <template name="matchingList">
-	<div class="sheerBg">
-		{{placesSearchList}}
+	<div class="rightEdge">
+		<div class="sheerBg narrow">
+			{{placesSearchList}}
+		</div>
 	</div>
 </template>

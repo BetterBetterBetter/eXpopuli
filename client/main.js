@@ -9,6 +9,7 @@ PATHNAME = new ReactiveVar(location.pathname);
 PLACES_SEARCH = new ReactiveVar("");
 OVERFLOW_SET = new ReactiveVar(false);
 MARKERS = new ReactiveVar();
+PROFILE = new ReactiveVar('');
 
 VIEW_HEIGHT = $(window).height();
 
@@ -311,6 +312,9 @@ function placesAddMarker(location, name, id, types, icon, map) {
         icon: image,
         animation: google.maps.Animation.DROP
       });
+      
+      marker.placeId = id;
+
       //add click listener
      ['click','touchstart'].forEach(function(e){
        marker.addListener(e,function(){
@@ -572,7 +576,18 @@ Template.layout.helpers({
 
 });
 
+Template.urlFrame.helpers({
 
+  urlId : function(){
+    PROFILE.get();
+
+    var urlId = location.pathname.replace('/url/','');
+    PROFILE.set(urlId)
+
+    return urlId;
+  }
+
+});
 
 
 Template.matchingList.helpers({
@@ -593,14 +608,15 @@ Template.matchingList.helpers({
           names.push(this.getTitle());
           locLats.push(this.getPosition().lat());
           locLngs.push(this.getPosition().lng());
-        
-          printArr.push("<li class=\"placesLi\" data-lat=\""+this.getPosition().lat()+"\" data-lng=\""+this.getPosition().lng()+"\" >"+this.getTitle()+"</li>");
+
+          printArr.push("<li class=\"placesLi\" data-lat=\""+this.getPosition().lat()+"\" data-lng=\""+this.getPosition().lng()+"\" data-profileName=\""+this.bizNameUrl+"\" data-placeId=\""+this.placeId+"\">"+this.getTitle()+"</li>");
 
 
 
       });
 
       var printArrToStr = printArr.join('');
+
 
       return Spacebars.SafeString(printArrToStr);
     }else{
@@ -630,8 +646,18 @@ Template.profile.helpers({
 	},
  findListing: function(){
     var currentList = this.params._id;
-    return Listsings.findOne({ _id: currentList });
-  }
+    return Listings.findOne({ _id: currentList });
+  },
+  profileId: function(){
+    PATHNAME.get();
+    PLACES_SEARCH.get();
+    PROFILE.get();
+
+    var id = this._id;
+    PROFILE.set(id);
+
+    return id;
+  } 
 });
 
  
@@ -646,12 +672,13 @@ Template.places.helpers({
     const placeTemplate = Template.instance();
 
     PATHNAME.get();
-
+    PROFILE.get();
 
     if(GoogleMaps.maps.mapPage !== undefined){
       var map = GoogleMaps.maps.mapPage.instance;
       var service = new google.maps.places.PlacesService(map);
       var id = location.pathname.replace('/places/','');
+      placeTemplate.placeId = id;
       var req = {placeId: id}
 
 
@@ -665,7 +692,7 @@ Template.places.helpers({
           var addr = place.formatted_address;
           var types = place.types.join(', ').replace(/_/g, ' ');
           var website = place.website;
-          var location = place.geometry.location;
+          var loc = place.geometry.location;
 
           if(place.photo !== undefined){
             var vh = $(window).height();
@@ -678,10 +705,11 @@ Template.places.helpers({
           placeTemplate.name.set(name); 
           placeTemplate.address.set(addr);
           placeTemplate.types.set(types);
-          placeTemplate.location.set(location);
+          placeTemplate.loc.set(loc);
           placeTemplate.website.set(website);
 
           PATHNAME.set(location.pathname);
+          PROFILE.set(placeTemplate.placeId);
 
         }else{
           //Router.go('/');
@@ -695,24 +723,32 @@ Template.places.helpers({
   },
 
   name: function(){
+        PROFILE.get();
     return Template.instance().name.get();
   },
   address: function(){
+        PROFILE.get();
     return Template.instance().address.get();
   },
   types: function(){
+        PROFILE.get();
     return Template.instance().types.get();
   },
   photo: function(){  
+        PROFILE.get();
     return Template.instance().photo.get();
   },
-  location: function(){
-    return Template.instance().location.get();
+  loc: function(){
+        PROFILE.get();
+    return Template.instance().loc.get();
   },
-  website: function(){  
+  website: function(){
+      PROFILE.get();  
     return Template.instance().website.get();
   },
   websiteLocal: function(){
+    PROFILE.get();
+
     var url1 = Template.instance().website.get(); 
      if(url1 !== undefined && url1.length){  
         if(url1.includes('https://')){
@@ -736,84 +772,133 @@ Template.places.helpers({
 
 
 
-Template.places.onCreated(function () {
-  this.name = new ReactiveVar( null );
-  this.address = new ReactiveVar( null );
-  this.location = new ReactiveVar( null );
-  this.photo = new ReactiveVar( null );
-  this.types = new ReactiveVar( null );
-  this.website = new ReactiveVar( null );
+
+Template.urlFrame.onCreated(function(){
+
+  var instance = this;
+  if(instance.data){
+    var urlProfile = location.pathname.replace('/url/','');
+    PROFILE.set(urlProfile);
+  }
+
+  instance.autorun(function(){
+
+    var id = PROFILE.get();
+    var subscription = instance.subscribe('comments', id);
+
+    if (subscription.ready()) {
+      debugger;
+      PROFILE.set(urlProfile);
+    } else {
+
+    }
+
+  });
+
 });
 
 
 
-Template.places.onRendered(function(){
 
-/*
-    const placeTemplate = Template.instance();
 
-    placeTemplate.name.get();
-    placeTemplate.address.get();
-    placeTemplate.types.get();
-    placeTemplate.photo.get();
 
+Template.places.onCreated(function () {
+  this.name = new ReactiveVar( null );
+  this.address = new ReactiveVar( null );
+  this.loc = new ReactiveVar( null );
+  this.photo = new ReactiveVar( null );
+  this.types = new ReactiveVar( null );
+  this.website = new ReactiveVar( null );
+
+  var instance = this;
+
+  instance.autorun(function(){
+
+    PATHNAME.get();
+    PROFILE.get();
 
     if(GoogleMaps.maps.mapPage !== undefined){
       var map = GoogleMaps.maps.mapPage.instance;
       var service = new google.maps.places.PlacesService(map);
       var id = location.pathname.replace('/places/','');
+      instance.placeId = id;
       var req = {placeId: id}
 
 
       service.getDetails(req, function(place, status){
 
         console.log(place);
-        console.log(status);
+        //console.log(status);
         if (status === google.maps.places.PlacesServiceStatus.OK) {
 
           var name = place.name;
           var addr = place.formatted_address;
           var types = place.types.join(', ').replace(/_/g, ' ');
           var website = place.website;
+          var loc = place.geometry.location;
 
-          if(place.photos[0] !== undefined){
+          if(place.photo !== undefined){
             var vh = $(window).height();
             var imgSize = Math.trunc(vh*.33);
             var photo = place.photos[0].getUrl({'maxWidth': imgSize, 'maxHeight': imgSize});
-            placeTemplate.photo.set(photo);
+            instance.photo.set(photo);
           }
 
 
-          placeTemplate.name.set(name);
-          placeTemplate.address.set(addr);
-          placeTemplate.types.set(types);
-          
-          setTimeout(function(){
-            $('main').trigger('overflow');
-          },1);
+          instance.name.set(name); 
+          instance.address.set(addr);
+          instance.types.set(types);
+          instance.loc.set(loc);
+          instance.website.set(website);
 
+          PATHNAME.set(location.pathname);
+          PROFILE.set(instance.placeId);
 
         }else{
           //Router.go('/');
 
-          setTimeout(function(){
-            $('main').trigger('overflow');
-          },1);
         }
 
 
 
       });
     }
-  */
-
+  });
 });
 
 
 
+Template.places.onRendered(function(){
+  PROFILE.set(location.pathname);
+});
+Template.urlFrame.onRendered(function(){
+  PROFILE.set(location.pathname);
+});
 
 
+Template.profile.onCreated(function(){
 
+  var instance = this;
+  if(instance.data){
+    PROFILE.set(instance.data._id);
+  }
+
+  instance.autorun(function(){
+
+    var id = PROFILE.get();
+    var subscription = instance.subscribe('comments', id);
+
+    if (subscription.ready()) {
+
+    } else {
+
+    }
+
+  });
+
+});
+
+ 
 
 
 Template.layout.onCreated(function () {
@@ -839,7 +924,7 @@ Template.layout.onCreated(function () {
 
 
   Listings.find().forEach(function(listing){
-  
+
    var locLat = listing.location[0];
    var locLng = listing.location[1];
    var markerPosition = getLatLngFromString(locLat, locLng);
@@ -885,6 +970,7 @@ Template.layout.onCreated(function () {
    });
 
 
+    marker.bizNameUrl = listing.bizNameUrl;
 
 
 
@@ -1006,6 +1092,8 @@ Template.layout.onCreated(function () {
     
 
 
+
+
    markers.push(marker);
 
    GoogleMaps.maps.mapPage.markers = markers;
@@ -1046,7 +1134,7 @@ Template.layout.onCreated(function () {
       setTimeout(function(){
         var map = GoogleMaps.maps.mapPage.instance;
         map.panTo(pos);
-        smoothZoom(map, 14, map.getZoom());
+        smoothZoom(map, 19, map.getZoom());
       }, 1111);
 
 
@@ -1202,6 +1290,8 @@ Template.layout.events({
       var urlAppend = url2;
       Router.go('/url/'+urlAppend);
       
+      PROFILE.set(urlAppend);
+
       setTimeout(function(){
         $('main').trigger('overflow');
         OVERFLOW_SET.set('false');
@@ -1384,13 +1474,36 @@ Template.layout.events({
 
 Template.matchingList.events({
 
-  'click .placesLi, mouseover .placesLi': function(e, template){
+  'mouseover .placesLi': function(e, template){
 
     var lat = e.target.getAttribute("data-lat");
     var lng = e.target.getAttribute("data-lng");
     var loc = getLatLngFromString(lat, lng);
     GoogleMaps.maps.mapPage.instance.panTo(loc);
 
+    var markers = MARKERS.get();
+    var profileName = e.target.getAttribute("data-profileName");
+    $(markers).each(function(){
+      if(this.bizNameUrl === profileName){
+        $(this).trigger('click');
+      }
+    });
+
+  },
+  'click .placesLi': function(e, template){
+
+    var lat = e.target.getAttribute("data-lat");
+    var lng = e.target.getAttribute("data-lng");
+    var loc = getLatLngFromString(lat, lng);
+    GoogleMaps.maps.mapPage.instance.panTo(loc);
+    var bizNameUrl = e.target.getAttribute("data-profileName");
+    var placeID = e.target.getAttribute("data-placeId");
+
+    if(bizNameUrl === "undefined"){
+      location.pathname = 'places/'+placeID;
+    }else{
+      Router.go('profile', { bizNameUrl: bizNameUrl });
+    }
   }
 
 });
@@ -1488,8 +1601,8 @@ $(window).resize(function(){
   },1);
 
   setTimeout(function(){
-    $('#urlFrameContainer').height(VIEW_HEIGHT);
-    $('#urlFrame').height(VIEW_HEIGHT);
+    //$('#urlFrameContainer').height(VIEW_HEIGHT);
+    //$('#urlFrame').height(VIEW_HEIGHT);
   },1);
 
 
