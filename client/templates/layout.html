@@ -1,38 +1,23 @@
 <template name="layout">
 
 <body>
-	<div id="gmap_search_cont" class="{{#unless showMap}} secret {{/unless}} controlMenu">
-		<input id="gmap_search" class="{{#unless showMap}} secret {{/unless}} searchbar controlMenu" type="text" name="gmap_search" placeholder="Search Map">
 
-		<select id="saved_gmap_search" class="gmap_saved_searches {{#unless showMap}} secret {{/unless}} searchbar controlMenu" type="text" name="gmap_search" placeholder="Saved Searches">
-			{{#each savedSearches}}
-				<option value="{{searchQ}}">{{searchQ}}</option>
-			{{/each}}
-		</select>
-
-		<i id="gmapbutton" class="{{#unless showMap}} secret {{/unless}} zmdi zmdi-search controlMenu"></i>
-		
-		{{#if currentUser}}
-			<i id="gmapSaveButton" class="{{#unless showMap}} secret {{/unless}} zmdi zmdi-archive controlMenu"></i>
-		{{/if}}
-
-	</div>
  
 
 	{{#if Template.subscriptionsReady}}
 	  <select id="kw_tier1"  name="kw1[]" multiple class="controlMenu searchbar kw1" placeholder="Keyword filter...">
 			{{#each listings}}
-				<option value="{{bizName}}">{{bizName}}</option>
+				<option value=""></option>
 			{{/each}}
 		</select>
 		<select id="kw_tier2"  name="kw2[]" multiple class="controlMenu searchbar kw2 secret" placeholder="Keyword filter...">
 			{{#each listings}}
-				<option value="{{bizName}}">{{bizName}}</option>
+				<option value=""></option>
 			{{/each}}
 		</select>
 		<select id="kw_tier3"  name="kw3[]" multiple class="controlMenu searchbar kw3 secret" placeholder="Keyword filter...">
 			{{#each listings}}
-				<option value="{{bizName}}">{{bizName}}</option>
+				<option value=""></option>
 			{{/each}}
 		</select>
   {{/if}}
@@ -56,24 +41,64 @@
 	</div>
 	{{> nav}}
 	
-	<div id="gmap_location_pullout" class="controlMenu {{#unless showMap}} secret {{/unless}}">
-		<i id="gmap_loc_i" class=" zmdi zmdi-globe-alt zmdi-hc-3x"></i>
-		<input type="text" name="location" class="controlMenu" id="gmap_loc" placeholder="Find Address...">
+
+
+
+	<div id="footer">
+		<span><a target="_self" href="{{pathFor 'new'}}">Make a Link</a></span>
+
+		<div id="sysTray">
+
+
+			<div id="gmap_search_container" class="controlMenu">
+				<i id="gmap_search_cont_i" class="controlMenu zmdi zmdi-search"></i>
+			</div>	
+			<div id="gmap_location_pullout" class="controlMenu {{#unless showMap}} secret {{/unless}}">
+				<i id="gmap_loc_i" class=" zmdi zmdi-globe-alt"></i>
+			</div>	
+			<div id="urlbar_container" class="controlMenu">
+				<i id="urlbar_i" class="controlMenu zmdi zmdi-flare"></i>
+			</div>	
+
+
+
+		</div>
+		
+
+
+
+
+
+		<span><a target="_self" href="{{pathFor 'privacy'}}">Privacy Policy</a></span>
 	</div>	
 
+			<input type="text" name="location" class="secret controlMenu middleInput urlbar" id="urlbar" placeholder="Enter URL..." value="{{currentURLiFramed}}">
 
-	<div id="urlbar_container" class="controlMenu">
-		<i id="urlbar_i" class="controlMenu zmdi zmdi-flare zmdi-hc-3x"></i>
-		<input type="text" name="location" class="controlMenu" id="urlbar" placeholder="Enter URL..." value="{{currentURLiFramed}}">
-	</div>	
+			<input type="text" name="location" class="secret controlMenu middleInput gmap_loc" id="gmap_loc" placeholder="Find Address...">
 
+		<div id="gmap_search_cont" class="gmap_search_cont secret middleInput controlMenu">
+			<input id="gmap_search" class="{{#unless showMap}} secret {{/unless}} searchbar controlMenu" type="text" name="gmap_search" placeholder="Search Map">
 
+			<select id="saved_gmap_search" class="gmap_search_cont gmap_saved_searches {{#unless showMap}} secret {{/unless}} searchbar controlMenu" type="text" name="gmap_search" placeholder="Saved Searches">
+				{{#each savedSearches}}
+					<option value="{{searchQ}}">{{searchQ}}</option>
+				{{/each}}
+			</select>
 
-	{{> footer}}
+			<i id="gmapbutton" class="gmap_search_cont {{#unless showMap}} secret {{/unless}} zmdi zmdi-search controlMenu"></i>
+			
+			{{#if currentUser}}
+				<i id="gmapSaveButton" class="gmap_search_cont {{#unless showMap}} secret {{/unless}} zmdi zmdi-archive controlMenu"></i>
+			{{/if}}
+
+		</div>
+
 		<!--article class="{{#if showMap}} secret {{/if}}">
 			{{> yield "article"}}
 		</article-->
  
+
+
 </body>
 </template>
 
@@ -91,10 +116,7 @@
 </template>
 
 <template name="footer">
-	<div id="footer">
-		<span><a target="_self" href="{{pathFor 'new'}}">Make a Link</a></span>
-		<span><a target="_self" href="{{pathFor 'privacy'}}">Privacy Policy</a></span>
-	</div>	
+
 </template>
 
 

@@ -133,6 +133,23 @@ ul li
 		padding-right .75em
 		z-index 9999
 
+.middleInput
+ position fixed
+ bottom 10%
+ width: 33%!important
+ left 33%
+ margin auto
+ right 33%
+ & *
+ 	width 33%
+ 	left 33%
+ 
+#gmap_search
+	width 33%
+	z-index 99999
+
+.gmap_saved_searches 
+	width 100%
 
 /*Banner for Log-in, etc*/
 #topBanner
@@ -474,6 +491,8 @@ input[name="website"], input[name="bizName"]
 
 
 .profile
+	#website
+		word-break break-all
 	.headerLogo
 		max-width 66%
 	legend
@@ -741,22 +760,9 @@ div.loaderScreen
 
 
 
-#gmap_search_cont, #gmap_search_cont *
-	transition .3s all ease-in-out
-	
 .searchbar
  z-index 9
  position fixed
- &#gmap_search
- 	width 35%
-  top 8.5%
-  left 8.5%
-  box-shadow #777 2px 2px 2px
- &#saved_gmap_search
- 	width 37%
-  top 13%
-  left 5%
-  box-shadow #777 2px 2px 2px
  &#kw_tier1
  	width 40%
  	top 8%
@@ -765,19 +771,12 @@ div.loaderScreen
 		box-shadow #777 2px 2px 2px
 	 
 
-.selectize-control
+.selectize-dropdown
 	transition 666ms all ease-in-out
-	width 40%
-	top 8%
- right 3%
- color #000
- position fixed
- .selectize-dropdown
- 	transition 666ms all ease-in-out
- 	position absolute
- 	z-index 99
- 	& *
- 		z-index 99	
+	position absolute
+	z-index 99
+	& *
+		z-index 99	
 .selectize-input
 	transition 666ms all ease-in-out
 	 box-shadow #777 2px 2px 2px
@@ -792,7 +791,6 @@ div.loaderScreen
 		background #000
 
 .kw1,.kw2,.kw3
- position fixed
  width 35%
  right 10%
 	.selectize-input
@@ -816,25 +814,8 @@ div.loaderScreen
 	top 13%
 	text-align right	
 
-#gmapbutton, #gmapSaveButton
-	position fixed
-	top 7.5%
-	z-index 999
-	transition 666ms all ease-in-out
-	color #000
-	font-size 44px
-#gmapbutton
-		left 38%
-#gmapSaveButton
-		left 42%
-		&:hover
-		 transform scale(1.1)
 
-.gmap_saved_searches
-	left 9.5%
-	position fixed
-	top 12.5%
-	width 36%
+
 
 .selectize-input.items
 	padding 0!important
@@ -915,83 +896,35 @@ i
 		&#close_main
 			color #b22222
 
-#gmap_location_pullout
-	position fixed
- top 22.5%
- width 0%
- padding 0
- left 0%
- text-align center
- transition 666ms all ease-in-out
- & *
- 	transition 666ms all ease-in-out
- 	padding 0
- 	left 0%
-  top 22.5%
- 	position absolute
- 	width 0%
- i
- 	text-align right
- 	color #66cc00
- input
-	 width 0%
- &.active
- 	width 60%
- 	input
- 	 width 60%
- 	 padding .45em
- 	i
- 		width 70%
- 		color #b22222
 
 
 article
 	transition 666ms all ease-in-out
 	
 
-#urlbar_container
-	bottom 8%
-	position fixed
-	
-#urlFrameContainer
-	width 100%
-	height 100%
-	#urlFrame
-		width 100%
-	 height 960px
-	 height 60vh
 
-#urlbar_container
-	position fixed
- bottom 13% 
- width 0%
- padding 0
- left 0%
- text-align center
- transition 666ms all ease-in-out
- & *
- 	transition 666ms all ease-in-out
- 	padding 0
- 	left 0%
-  top 22.5%
- 	position absolute
- 	width 0%
- i
- 	text-align right
- 	color #66cc00
- input
-	 width 0%
- &.active
- 	width 60%
- 	input
- 	 width 60%
- 	 padding .45em
- 	i
- 		width 70%
- 		color #b22222
- 		
-
-
+#sysTray
+ display flex
+ flex-direction row
+ flex-wrap wrap
+ width 33%
+ justify-content space-around
+ &>*
+ 	div#sysTray > * 
+	  padding-left 2em
+	  padding-right 2em
+	& i
+		transition 333ms all ease-in-out
+		position fixed
+		bottom 0px
+		&:hover
+			font-size 3em
+			transform translate(-15px)
+	.active i
+		font-size 3em
+		transform translate(-15px)
+		color #21ba45
+		
 
 div.line
  transform-origin 0 100%
@@ -1035,3 +968,5 @@ div.line
 	color rgba(250, 235, 215, .93)!important
 	textarea, .ui.sorting-dropdown *
 		color rgba(0, 0, 0, .93)!important
+
+

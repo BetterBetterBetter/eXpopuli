@@ -68,7 +68,7 @@ smoothZoom = function (map, max, cnt) {
 
 function MCSet(){
   var map = GoogleMaps.maps.mapPage.instance;
-  var mcOptions = {averageCenter: true, imagePath: "http://betterbetterbetter.org/wp-content/uploads/2017/04/light_"};
+  var mcOptions = {averageCenter: true, imagePath: "https://betterbetterbetter.org/wp-content/uploads/2017/04/light_"};
   mc = new MarkerClusterer(map, markers, mcOptions);
 }
 function toggleBounce(marker) {
@@ -426,7 +426,7 @@ function placesAddMarker(location, name, id, types, icon, map) {
      GoogleMaps.maps.mapPage.markers = markers;
      MARKERS.set(markers);
 
-    mcOptions = {averageCenter: true, imagePath: "http://betterbetterbetter.org/wp-content/uploads/2017/04/light_"};
+    mcOptions = {averageCenter: true, imagePath: "https://betterbetterbetter.org/wp-content/uploads/2017/04/light_"};
      mc = new MarkerClusterer(map, markers, mcOptions);
 
 
@@ -580,6 +580,7 @@ Template.urlFrame.helpers({
 
   urlId : function(){
     PROFILE.get();
+    PATHNAME.get();
 
     var urlId = location.pathname.replace('/url/','');
     PROFILE.set(urlId)
@@ -694,7 +695,7 @@ Template.places.helpers({
           var website = place.website;
           var loc = place.geometry.location;
 
-          if(place.photo !== undefined){
+          if(place.photos !== undefined){
             var vh = $(window).height();
             var imgSize = Math.trunc(vh*.33);
             var photo = place.photos[0].getUrl({'maxWidth': imgSize, 'maxHeight': imgSize});
@@ -873,6 +874,7 @@ Template.places.onRendered(function(){
 });
 Template.urlFrame.onRendered(function(){
   PROFILE.set(location.pathname);
+  PATHNAME.set(location.pathname);
 });
 
 
@@ -1101,7 +1103,7 @@ Template.layout.onCreated(function () {
 
   });
 
-  mcOptions = {averageCenter: true, imagePath: "http://betterbetterbetter.org/wp-content/uploads/2017/04/light_"};
+  mcOptions = {averageCenter: true, imagePath: "https://betterbetterbetter.org/wp-content/uploads/2017/04/light_"};
    mc = new MarkerClusterer(map.instance, markers, mcOptions);
 
 
@@ -1459,13 +1461,44 @@ Template.layout.events({
  },
 
  ///// Pullout toggles
-  'click #gmap_loc_i': function(e){
-    $(e.target).parent().toggleClass('active');
-  },
-  'click #urlbar_i': function(e){
-    $(e.target).parent().toggleClass('active');
-  }
+  'click #gmap_loc_i, click #urlbar_i, click #gmap_search_cont_i': function(e){
+    
+    if(!$(e.target).parent().hasClass('active')){
+      
+      $('#sysTray').children('.active').each(function(){
+        $(this).removeClass('active');
+      });
+      
+      $('.middleInput').each(function(){
+        if(!$(this).hasClass('secret')){
+          $(this).addClass('secret');
+        }
+      });
 
+    }
+
+    $(e.target).parent().toggleClass('active');
+
+    var idOfToggler = e.target.getAttribute('id').replace('_i','');
+
+    $('.'+idOfToggler).toggleClass('secret');
+
+
+  }
+  /*
+  'click #urlbar_i': function(e){
+
+    if(!$(e.target).parent().hasClass('active')){
+      $('#sysTray').children('.active').each(function(){
+        $(this).removeClass('active');
+      });
+    }
+
+    $(e.target).parent().toggleClass('active');
+
+    
+  }
+  */
 
 
 });
@@ -1530,14 +1563,32 @@ Template.layout.onRendered(function(){
           $('#kw_tier1').selectize({
             maxItems: 2,
             onChange: kwChange,
+            create: function(input) {
+              return {
+                  value: input,
+                  text: input
+              };
+            },
             plugins: ['restore_on_backspace', 'remove_button']});
           $('#kw_tier2').selectize({
             maxItems: 2,
             onChange: kwChange,
+            create: function(input) {
+              return {
+                  value: input,
+                  text: input
+              };
+            },
             plugins: ['restore_on_backspace', 'remove_button']}); 
           $('#kw_tier3').selectize({
             maxItems: 2,
             onChange: kwChange,
+            create: function(input) {
+              return {
+                  value: input,
+                  text: input
+              };
+            },
             plugins: ['restore_on_backspace', 'remove_button']});
 
 
