@@ -59,11 +59,11 @@ facebook-config-ui@1.0.0
 google-config-ui@1.0.0
 twitter-config-ui@1.0.0
 jeremy:geocomplete
-#jeremy:selectize
+jeremy:selectize
 comerc:autoform-selectize
 ixdi:material-design-iconic-font
 t3db0t:invites
 hiukim:semantic-ui
 #jer:comments-ui
 arkham:comments-ui
-jer:selectize
+#jer:selectize
