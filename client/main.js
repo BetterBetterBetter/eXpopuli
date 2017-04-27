@@ -10,6 +10,8 @@ PLACES_SEARCH = new ReactiveVar("");
 OVERFLOW_SET = new ReactiveVar(false);
 MARKERS = new ReactiveVar();
 PROFILE = new ReactiveVar('');
+KEYWORDS = new ReactiveVar([]);
+
 
 VIEW_HEIGHT = $(window).height();
 
@@ -88,6 +90,15 @@ function kwChange(){
   var idNum = parseInt(id.match(/\d+$/)[0]);
   var twoHidden = $('.kw2').hasClass('secret');
   var threeHidden = $('.kw3').hasClass('secret');
+
+  setTimeout(function(){
+    var t1 = $('#kw_tier1').val();
+    var t2 = $('#kw_tier2').val();
+    var t3 = $('#kw_tier3').val();
+    var kwCat = t1.concat(t2, t3);
+    KEYWORDS.set(kwCat);
+  },333);
+
 
   if(this.items.length){
 
@@ -504,7 +515,42 @@ Template.layout.helpers({
   savedSearches: function(){
     return SavedSearches.find();
   },
+  keywords: function(){
+    return Keywords.find();
+  },
+  tier: function(tierNum){
+    if(this.tier === tierNum){
+      return true;
+    }else{
+      return false;
+    }
+  },
+  inPathName: function(){
+    KEYWORDS.get();
 
+
+    var t1 = $('#kw_tier1').val();
+    var t2 = $('#kw_tier2').val();
+    var pathNameArr = this.path.split('/');
+    
+    if(this.tier === 2){
+      if(t1){
+        if(pathNameArr[0].includes(t1[0])){
+          return true;
+        }else{
+          return false;
+        }
+      }
+    }else if(this.tier === 3){
+      if(t2){    
+        if(pathNameArr[1].includes(t2[0])){
+          return true;
+        }else{
+          return false;
+        }
+      }
+    }
+  },
   currentURLiFramed: function(){
     if(location.pathname.includes('/url/')){
       var urlIframe = location.pathname.replace('/url/','');
@@ -788,7 +834,6 @@ Template.urlFrame.onCreated(function(){
     var subscription = instance.subscribe('comments', id);
 
     if (subscription.ready()) {
-      debugger;
       PROFILE.set(urlProfile);
     } else {
 
@@ -906,6 +951,7 @@ Template.profile.onCreated(function(){
 Template.layout.onCreated(function () {
     this.subscribe('listings');
     this.subscribe('savedSearches');
+    this.subscribe('keywords');
 
 
 
@@ -1241,14 +1287,14 @@ Template.layout.events({
   
 
     var bizName = document.getElementById('name').innerHTML;
-  var bizNameUrl = bizName.replace(/ /g,'-');
+    var bizNameUrl = bizName.replace(/ /g,'-');
     var industry = document.getElementById('types').innerHTML;
     var locRaw = document.getElementById('location').innerHTML.replace("(","").replace(")","").replace(" ","").split(',');
-  var locationLat = locRaw[0];
-  var locationLng = locRaw[1];
-  var location = [locationLat, locationLng];
+    var locationLat = locRaw[0];
+    var locationLng = locRaw[1];
+    var location = [locationLat, locationLng];
     var website = document.getElementById('website').innerHTML;
-  var socialMission = "";
+    var socialMission = "";
     var userId = Meteor.userId();
     var createdAt = new Date();
 
@@ -1561,9 +1607,15 @@ Template.layout.onRendered(function(){
       if($('.selectize-control.searchbar.multi.plugin-restore_on_backspace.plugin-remove_button').length){return;}else{
         if($('#kw_tier1').length){
           $('#kw_tier1').selectize({
-            maxItems: 2,
+            maxItems: 1,
+            singleOverride: true,
+            tagType: "TAG_SELECT",
             onChange: kwChange,
             create: function(input) {
+              var path = input;
+              var userId = Meteor.userId();
+              var createdAt = new Date();
+              Meteor.call("addKeyword", input, 1, path, userId, createdAt);
               return {
                   value: input,
                   text: input
@@ -1571,9 +1623,21 @@ Template.layout.onRendered(function(){
             },
             plugins: ['restore_on_backspace', 'remove_button']});
           $('#kw_tier2').selectize({
-            maxItems: 2,
+            maxItems: 1,
             onChange: kwChange,
             create: function(input) {
+              var pathName = [];
+              var t1 = $('#kw_tier1').val();
+              /*t1.forEach(function(e){
+                var pa = e+"/";
+                pathName.push(pa);
+              });
+              debugger;
+              */
+              var path = t1[0]+'/'+input;
+              var userId = Meteor.userId();
+              var createdAt = new Date();
+              Meteor.call("addKeyword", input, 2, path, userId, createdAt);              
               return {
                   value: input,
                   text: input
@@ -1581,9 +1645,20 @@ Template.layout.onRendered(function(){
             },
             plugins: ['restore_on_backspace', 'remove_button']}); 
           $('#kw_tier3').selectize({
-            maxItems: 2,
+            maxItems: 1,
             onChange: kwChange,
             create: function(input) {
+              var t1 = $('#kw_tier1').val();
+              var t2 = $('#kw_tier2').val();
+              /*t1.forEach(function(e){
+                var pa = e+"/";
+                pathName.push(pa);
+              });
+              */
+              var path = t1[0]+'/'+t2[0]+'/'+input;
+              var userId = Meteor.userId();
+              var createdAt = new Date();
+              Meteor.call("addKeyword", input, 3, path, userId, createdAt);  
               return {
                   value: input,
                   text: input
@@ -1598,6 +1673,7 @@ Template.layout.onRendered(function(){
             valueField: 'title',
             labelField: 'title',
             searchField: 'title',
+            dropdownDirection: 'auto',
             create: false,
             onChange: gmap_saved_search,
             plugins: ['remove_button']}).data('selectize'); 
@@ -1679,13 +1755,6 @@ $(window).resize(function(){
 		} else {
 			$('#allList').css('margin-left', 0);
 		}
-
-
-		setTimeout(function(){
-			if(typeof $listingsGrid !== 'undefined'){
-				$listingsGrid.isotope('layout');
-			}
-		}, 333);
 
 	}
 

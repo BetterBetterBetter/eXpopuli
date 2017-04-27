@@ -6,18 +6,24 @@
 
 	{{#if Template.subscriptionsReady}}
 	  <select id="kw_tier1"  name="kw1[]" multiple class="controlMenu searchbar kw1" placeholder="Keyword filter...">
-			{{#each listings}}
-				<option value=""></option>
+			{{#each keywords}}
+				{{#if tier 1}}
+					<option value="{{keyword}}">{{keyword}}</option>
+				{{/if}}
 			{{/each}}
 		</select>
 		<select id="kw_tier2"  name="kw2[]" multiple class="controlMenu searchbar kw2 secret" placeholder="Keyword filter...">
-			{{#each listings}}
-				<option value=""></option>
+			{{#each keywords}}
+				{{#if tier 2}}
+					<option value="{{keyword}}">{{keyword}}</option>
+				{{/if}}
 			{{/each}}
 		</select>
 		<select id="kw_tier3"  name="kw3[]" multiple class="controlMenu searchbar kw3 secret" placeholder="Keyword filter...">
-			{{#each listings}}
-				<option value=""></option>
+			{{#each keywords}}
+				{{#if tier 3}}
+						<option value="{{keyword}}">{{keyword}}</option>
+				{{/if}}
 			{{/each}}
 		</select>
   {{/if}}
@@ -76,22 +82,29 @@
 
 			<input type="text" name="location" class="secret controlMenu middleInput gmap_loc" id="gmap_loc" placeholder="Find Address...">
 
-		<div id="gmap_search_cont" class="gmap_search_cont secret middleInput controlMenu">
-			<input id="gmap_search" class="{{#unless showMap}} secret {{/unless}} searchbar controlMenu" type="text" name="gmap_search" placeholder="Search Map">
+			<div id="gmap_search_cont" class="gmap_search_cont secret middleInput controlMenu">
 
-			<select id="saved_gmap_search" class="gmap_search_cont gmap_saved_searches {{#unless showMap}} secret {{/unless}} searchbar controlMenu" type="text" name="gmap_search" placeholder="Saved Searches">
-				{{#each savedSearches}}
-					<option value="{{searchQ}}">{{searchQ}}</option>
-				{{/each}}
-			</select>
+				<select id="saved_gmap_search" class=" gmap_saved_searches searchbar controlMenu" type="text" name="gmap_search" placeholder="Saved Searches">
+					{{#each savedSearches}}
+						<option value="{{searchQ}}">{{searchQ}}</option>
+					{{/each}}
+				</select>
+				
+				<br>
+				
+				<input id="gmap_search" class=" searchbar controlMenu" type="text" name="gmap_search" placeholder="Search Map">
+				
+				<div class="icon-container">
+					
+					<i id="gmapbutton" class=" zmdi zmdi-search controlMenu"></i>
+				
+					{{#if currentUser}}
+						<i id="gmapSaveButton" class="  zmdi zmdi-archive controlMenu"></i>
+					{{/if}}
 
-			<i id="gmapbutton" class="gmap_search_cont {{#unless showMap}} secret {{/unless}} zmdi zmdi-search controlMenu"></i>
-			
-			{{#if currentUser}}
-				<i id="gmapSaveButton" class="gmap_search_cont {{#unless showMap}} secret {{/unless}} zmdi zmdi-archive controlMenu"></i>
-			{{/if}}
+				</div>
 
-		</div>
+			</div>
 
 		<!--article class="{{#if showMap}} secret {{/if}}">
 			{{> yield "article"}}

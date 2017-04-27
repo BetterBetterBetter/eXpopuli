@@ -41,11 +41,19 @@ Invites.config({
     sort: {createdAt: -1}
    });
   });
+
   Meteor.publish("savedSearches", function(){
    return SavedSearches.find({}, {
     sort: {createdAt: -1}
    });
   });
+
+Meteor.publish("keywords", function(){
+   return Keywords.find({}, {
+    sort: {createdAt: -1}
+   });
+  });
+
 
 
   Listings._ensureIndex({ "_id": 1});
@@ -97,6 +105,12 @@ Listings.allow({
 });
 
 SavedSearches.allow({
+  insert: function (userId, doc) {
+      return true;
+  }
+});
+
+Keywords.allow({
   insert: function (userId, doc) {
       return true;
   }
@@ -156,6 +170,18 @@ Meteor.methods({
    searchQ: searchQ,
    userId: userId,
    createdAt: new Date()
+  });
+
+ },
+
+addKeyword: function (keyword, tier, path, userId, createdAt){
+
+  Keywords.insert({
+   keyword: keyword, 
+   tier: tier, 
+   path: path,
+   userId: userId,
+   createdAt: createdAt
   });
 
  }
