@@ -1507,11 +1507,11 @@ Template.layout.events({
  },
 
  ///// Pullout toggles
-  'click #gmap_loc_i, click #urlbar_i, click #gmap_search_cont_i': function(e){
+  'click #sysTray i': function(e){
     
     if(!$(e.target).parent().hasClass('active')){
       
-      $('#sysTray').children('.active').each(function(){
+      $('#sysTray').find('.active').each(function(){
         $(this).removeClass('active');
       });
       

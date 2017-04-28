@@ -90,7 +90,7 @@ body
  transition 666ms all ease-in-out
 	color rgba(250, 235, 215, .93)
 
-nav#topBanner
+nav	
 	ul
 	 margin-top 0
 	 margin-bottom 0
@@ -172,18 +172,9 @@ ul li
 
 /*Banner for Log-in, etc*/
 #topBanner
-	position fixed
-	background rgb(10,0,10)	
-	background rgba(10,0,10,0.8)	
-	width 100%
-	top 0
-	left 0
-	right 0
 	text-align right
-	height 5%
 	font-size .55em
 	font-family "Fredoka One", sans-serif
-	z-index 99999
 	li a
 		color #049EDB	
 		click-shadow()
@@ -343,7 +334,6 @@ li
 		transition 3s height ease-in-out
 		position absolute
 	div > .gmnoprint:last-child
-		top 4.75%!important
 		margin 0%!important
 		left 0%!important
 	.cluster
@@ -937,6 +927,7 @@ article
 		position fixed
 		bottom 2.5%
 		font-size 2em
+		color #fff
 		&:hover
 			font-size 4em
 			transform translate(-20px)
@@ -989,4 +980,7 @@ div.line
 	textarea, .ui.sorting-dropdown *
 		color rgba(0, 0, 0, .93)!important
 
-
+.halfHeight
+	height 15em
+	height 50vh
+	

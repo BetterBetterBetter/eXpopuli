@@ -48,6 +48,18 @@ Router.route('/privacy', {
     	}
     }
 });
+Router.route('/accounts', {
+    name: 'accounts',
+    template: 'nav',
+    yieldTemplates: {
+      'nav': {to: 'article'}
+    },
+    seo: {
+     title: {
+      text: 'Accounts'
+      }
+    }
+});
 Router.route('/listings', {
     name: 'allListings',
     template: 'allListings',

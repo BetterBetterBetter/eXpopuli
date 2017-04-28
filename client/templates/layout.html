@@ -45,7 +45,6 @@
   	<i id="open_main" class="mainbutton secret zmdi zmdi-plus-circle zmdi-hc-2x"></i>
   	<i id="close_main" class="mainbutton zmdi zmdi-minus-circle zmdi-hc-2x"></i>
 	</div>
-	{{> nav}}
 	
 
 
@@ -55,7 +54,11 @@
 
 		<div id="sysTray">
 
-
+			<div id="home_cont" class="controlMenu">
+				<a href="{{pathFor 'home'}}">
+					<i id="home_i" class="controlMenu zmdi zmdi-home"></i>
+				</a>
+			</div>	
 			<div id="gmap_search_container" class="controlMenu">
 				<i id="gmap_search_cont_i" class="controlMenu zmdi zmdi-search"></i>
 			</div>	
@@ -65,9 +68,13 @@
 			<div id="urlbar_container" class="controlMenu">
 				<i id="urlbar_i" class="controlMenu zmdi zmdi-flare"></i>
 			</div>	
+			<div id="user_cont" class="controlMenu">
+				<a href="{{pathFor 'accounts'}}">
+					<i id="user_i" class="controlMenu zmdi zmdi-accounts"></i>
+				</a>
+			</div>	
 
-
-
+ 
 		</div>
 		
 
@@ -118,14 +125,15 @@
 
 
 
-<template name="nav">
-	<nav id="topBanner">
-		<a href="{{pathFor 'home'}}" target="_blank"><div id="b3logo" class="contain-image"></div></a>
-		<ul>
-			<li><a href="{{pathFor 'home'}}">Home</a></li>
-			<li>	{{> loginButtons align="right"}}</li>
-		</ul>
-	</nav>
+<template name="nav">  
+	<div class="sheerBg halfHeight">
+		<nav id="topBanner">
+			<a href="{{pathFor 'home'}}" target="_blank"><div id="b3logo" class="contain-image"></div></a>
+			<ul>
+				<li>	{{> loginButtons align="right"}}</li>
+			</ul>
+		</nav>
+	</div>
 </template>
 
 <template name="footer">
