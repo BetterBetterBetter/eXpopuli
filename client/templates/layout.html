@@ -37,7 +37,7 @@
   	{{> googleMap name="mapPage" options=mapPageMapOptions}}
 	</div>
 
-	<main class=" {{#unless showingInMain}} secret {{/unless}} ">
+	<main class=" {{#unless showingInMain}} secret {{/unless}} {{currentTemplate}}">
 			{{> yield}}
   </main>	
 
@@ -63,14 +63,14 @@
 				<i id="gmap_search_cont_i" class="controlMenu zmdi zmdi-search"></i>
 			</div>	
 			<div id="gmap_location_pullout" class="controlMenu {{#unless showMap}} secret {{/unless}}">
-				<i id="gmap_loc_i" class=" zmdi zmdi-globe-alt"></i>
+				<i id="gmap_loc_i" class=" zmdi zmdi-globe"></i>
 			</div>	
 			<div id="urlbar_container" class="controlMenu">
-				<i id="urlbar_i" class="controlMenu zmdi zmdi-flare"></i>
+				<i id="urlbar_i" class="controlMenu zmdi zmdi-iridescent"></i>
 			</div>	
 			<div id="user_cont" class="controlMenu">
 				<a href="{{pathFor 'accounts'}}">
-					<i id="user_i" class="controlMenu zmdi zmdi-accounts"></i>
+					<i id="user_i" class="controlMenu zmdi zmdi-dns"></i>
 				</a>
 			</div>	
 

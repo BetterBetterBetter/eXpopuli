@@ -551,6 +551,11 @@ Template.layout.helpers({
       }
     }
   },
+  currentTemplate: function(){
+    var path = Iron.Location.get().path;
+    var pathClean = path.replace("/"," ");
+    return pathClean;
+  },
   currentURLiFramed: function(){
     if(location.pathname.includes('/url/')){
       var urlIframe = location.pathname.replace('/url/','');

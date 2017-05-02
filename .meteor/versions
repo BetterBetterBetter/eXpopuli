@@ -6,12 +6,14 @@ accounts-password@1.3.5
 accounts-twitter@1.2.1
 accounts-ui@1.1.9
 accounts-ui-unstyled@1.2.1
+alanning:roles@1.2.16
 aldeed:autoform@5.8.1
 aldeed:collection2@2.10.0
 aldeed:collection2-core@1.2.0
 aldeed:schema-deny@1.1.0
 aldeed:schema-index@1.1.1
 aldeed:simple-schema@1.5.3
+aldeed:tabular@1.4.2
 aldeed:template-extension@4.0.0
 alexche:autoform-froala-editor@0.1.1
 allow-deny@1.0.5
@@ -111,8 +113,11 @@ meteor@1.6.1
 meteor-base@1.0.4
 meteorhacks:async@1.0.0
 meteorhacks:inject-initial@1.0.4
+meteorhacks:meteorx@1.0.2
 meteorhacks:npm@1.5.0
+meteorhacks:unblock@1.1.0
 meteortoys:toykit@3.0.4
+mfactory:admin-lte@0.0.2
 minifier-css@1.2.16
 minifier-js@2.0.0
 minimongo@1.0.21
@@ -142,6 +147,7 @@ pauli:accounts-linkedin@1.3.1
 pauli:linkedin@1.3.1
 promise@0.8.8
 raix:eventemitter@0.1.3
+raix:handlebar-helpers@0.2.5
 random@1.0.10
 rate-limit@1.0.8
 reactive-dict@1.1.8
@@ -167,6 +173,7 @@ templating-compiler@1.3.2
 templating-runtime@1.3.2
 templating-tools@1.1.2
 tracker@1.1.2
+twbs:bootstrap@3.3.6
 twitter-config-ui@1.0.0
 twitter-oauth@1.2.0
 ui@1.0.13
@@ -174,5 +181,7 @@ underscore@1.0.10
 url@1.1.0
 webapp@1.3.15
 webapp-hashing@1.0.9
+yogiben:admin@1.2.8
 yogiben:autoform-file@0.4.2
 yogiben:autoform-map@0.2.0
+zimme:active-route@2.3.2

@@ -276,9 +276,9 @@ Router.route('/invites', {
         this.next();
       }
     },*/
+  name: 'inviteAdmin',
   template: 'inviteAdmin',
   yieldTemplates: {
-    'skipMain': {to: 'main'},
     'inviteAdmin': {to: 'article'}
   }
 });

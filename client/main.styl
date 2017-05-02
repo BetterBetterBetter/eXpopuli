@@ -144,6 +144,11 @@ ul li
  	width 33%
  	left 33%
  	
+
+.admin-layout
+	color #000
+	
+
 #gmap_search_cont
 	.selectize-input.items
 		width 90%
@@ -283,9 +288,35 @@ li
  	width 100%
  	margin 0
 
+::-webkit-scrollbar-thumb
+
+::-webkit-scrollbar-track-piece
+	
+::-webkit-scrollbar-track
+
+::-webkit-scrollbar-button
 
 ::-webkit-scrollbar
- display none 
+
+::-webkit-scrollbar-corner, ::-webkit-resizer
+
+
+
+::-webkit-scrollbar 
+ width .5em
+ height .5em
+ border-radius 2px
+
+::-webkit-scrollbar-track 
+ -webkit-box-shadow inset 0 0 6px rgba(0,0,0,0.4)
+ 
+::-webkit-scrollbar-thumb 
+ background-color darkgrey
+ outline 1px solid slategrey
+
+
+
+
 
 .header
 	background rgb(10,0,10)
@@ -433,14 +464,10 @@ fieldset
 			lost-column 1	
 
 [type="submit"]
-	glossy-button cyan 'medium'
-	background rgb(69, 201, 223)
- background rgba(69, 201, 223, 0.81)
+	glossy-button #2f4f4f 'medium'
  text-shadow #D2771E 0 1px 0, #D22D1E -1px 0 0, #D22D1E 0 -1px 0, #D2771E 1px 0 0
-	font-size 2em
+ transition 666ms all ease
 	&:hover
-		background rgb(69, 201, 223)
- 	background rgba(69, 201, 223, 0.81)
  	color #fdf
 
 #login-dropdown-list
@@ -800,8 +827,11 @@ div.loaderScreen
 		background #000
 
 .kw1,.kw2,.kw3
- width 35%
- right 10%
+ width 20%
+ padding-left 2.5%
+ padding-right 2.5%
+ top 0
+ text-align center
 	.selectize-input
 		background rgba(250,250,250,.25)
 		border-radius .5em
@@ -812,17 +842,11 @@ div.loaderScreen
 		 background rgba(250,250,250,.75)
 
 .kw1
-	top 5%
-	right 15%
-	text-align left
+	left 12.5%
 .kw2
-	top 9%
-	right 12.5%
-	text-align center
+	left 37.5%
 .kw3
-	top 13%
-	text-align right	
-
+	left 62.5%
 
 
 
@@ -844,8 +868,8 @@ div.loaderScreen
 	z-index 99
 
 main
-	top 19%
-	max-height 77%
+	top 5%
+	max-height 80%
  position absolute
  overflow auto
  margin-left 17%
@@ -853,6 +877,23 @@ main
  width 66%
  transition 666ms all ease-in-out
  z-index 99
+	table
+		font-size .66em
+		tr:nth-child(even)
+			background #111
+		tr:nth-child(odd)
+			background #222
+		thead tr 
+			background #000!important
+			color #eee!important
+			
+	&.invites
+		background rgb(10,0,10)	
+		background rgba(10,0,10,0.8)
+		padding-left 1em
+		padding-right 1em
+
+
 i
 	cursor pointer
 	z-index 99
@@ -882,10 +923,10 @@ i
 		font-size 2em
 		z-index 999
 	&.closed
-		top 13%!important
+		top 2%!important
 		right 3%!important	
  transition 666ms all ease-in-out
-	top 17%!important
+	top 2%!important
 	right 17%!important
 	z-index 999
 	height 20px
@@ -984,3 +1025,7 @@ div.line
 	height 15em
 	height 50vh
 	
+.admin-layout
+	font-size .66em
+	.pagination
+		font-size .66em
