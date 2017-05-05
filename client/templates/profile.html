@@ -32,13 +32,13 @@
 
 
 
-<template name="places">
+<template name="place">
   <form>
     {{placeDetails}}
     
     <fieldset class="profile">
       <legend align="center"><img class="headerLogo" src="{{photo}}" /></legend>
-      <a href="{{websiteLocal}}">
+      <a href="{{pathFor 'url' data=website}}">
         <h1 id="name" class="bizName">{{name}}</h1>
       </a>
                     <br>

@@ -174,10 +174,12 @@ Meteor.methods({
 
  },
 
-addKeyword: function (keyword, tier, path, userId, createdAt){
+addKeyword: function (keyword, pre, pro, tier, path, userId, createdAt){
 
   Keywords.insert({
    keyword: keyword, 
+   preceding: pre,
+   proceeding: pro,
    tier: tier, 
    path: path,
    userId: userId,

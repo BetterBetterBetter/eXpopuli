@@ -114,7 +114,7 @@ ul li
 	icon-x(20px, orange, 5px)
 
 #footer
-	justify-content space-between
+	justify-content center
 	bottom 0
 	left 0
 	right 0
@@ -144,6 +144,10 @@ ul li
  	width 33%
  	left 33%
  	
+#urlFrame
+	width 100%
+	height 25em
+	height 70vh
 
 .admin-layout
 	color #000
@@ -413,6 +417,9 @@ li
 	tr:nth-child(2)
 		height 8em
 		
+.gm-style
+	& > div > div > div > div > div > div:last-child
+		display none
 
 .btn.active
 	border 2px inset
@@ -934,18 +941,21 @@ i
 	position absolute
 	top 0
 	right 0
- .mainbutton
- 	transition 666ms all ease-in-out
- 	display block
- 	position absolute
- 	user-select none
-  click-shrink()
-		padding 0!important
-		&#open_main
-			color #66cc00
-		&#close_main
-			color #b22222
 
+.mainbutton
+	transition 666ms all ease-in-out
+	display block
+	position absolute
+	user-select none
+ click-shrink()
+	padding 0!important
+	&#open_main
+		color #66cc00
+	&#close_main
+		color #b22222
+#back_cont, #back_i
+	top 3%
+	left 15% 
 
 
 article
@@ -1029,3 +1039,11 @@ div.line
 	font-size .66em
 	.pagination
 		font-size .66em
+		
+#keywordsManagerTable
+	text-align center 
+	textarea 
+		height 15em 
+		height 20vh 
+	& *
+			text-align center 

@@ -1,6 +1,12 @@
 <template name="home">
 
   <div class="sheerBg">
+	<nav id="topBanner">
+		<a href="{{pathFor 'home'}}" target="_blank"><div id="b3logo" class="contain-image"></div></a>
+		<ul>
+			<li>	{{> loginButtons align="right"}}</li>
+		</ul>
+	</nav>
 	<h1>eX Populi</h1>
 
 	<h2>From the people, for the world.</h2>

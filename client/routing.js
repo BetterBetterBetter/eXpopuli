@@ -48,18 +48,43 @@ Router.route('/privacy', {
     	}
     }
 });
-Router.route('/accounts', {
-    name: 'accounts',
-    template: 'nav',
+Router.route('/keywords', {
+    name: 'keywordsManager',
+    template: 'keywordsManager',
+    subscriptions: function(){
+      return Meteor.subscribe("keywords");
+    },
     yieldTemplates: {
-      'nav': {to: 'article'}
+      'keywordsManager': {to: 'article'}
     },
     seo: {
      title: {
-      text: 'Accounts'
+      text: 'Keywords Manager'
       }
     }
 });
+Router.route('/keywords/:_id', {
+    name: 'keywordManager',
+    template: 'keywordsManager',
+    subscriptions: function(){
+      return Meteor.subscribe("keywords");
+    },
+    yieldTemplates: {
+      'keywordsManager': {to: 'article'}
+    },
+    seo: {
+     title: {
+      text: 'Keywords Manager'
+      }
+    },
+    data: function(){
+      var id = this.params._id;
+      console.log(Keywords.findOne({ _id: id }));
+      return Keywords.findOne({ _id: id });
+    }
+});
+
+
 Router.route('/listings', {
     name: 'allListings',
     template: 'allListings',
@@ -95,13 +120,13 @@ Router.route('/new', {
 
 Router.route('/places/:placeId', {
   name: 'place',
-  template: 'places',
+  template: 'place',
   waitOn: function () {
     return Meteor.subscribe('listings');
   },
   yieldTemplates: {
-    'places': {to: 'main'},
-    'places': {to: 'article'}
+    'place': {to: 'main'},
+    'place': {to: 'article'}
   },
   data: function(){
     return this.params.placeId;
@@ -111,6 +136,18 @@ Router.route('/places/:placeId', {
 
 Router.route('/places', {
   name: 'places',
+  template: 'matchingList',
+  waitOn: function () {
+    return Meteor.subscribe('listings');
+  },
+  yieldTemplates: {
+    'matchingList': {to: 'main'},
+    'matchingList': {to: 'article'}
+  }
+});
+
+Router.route('/profile', {
+  name: 'profile2',
   template: 'matchingList',
   waitOn: function () {
     return Meteor.subscribe('listings');
@@ -257,9 +294,6 @@ Router.route('/profile/edit/:bizNameUrl', {
 Router.route('/url/:url', {
   name: 'urlFrame',
   template: 'urlFrame',
-  waitOn: function () {
-    return Meteor.subscribe('listings');
-  },
   yieldTemplates: {
     'urlFrame': {to: 'article'}
   },
@@ -276,9 +310,10 @@ Router.route('/invites', {
         this.next();
       }
     },*/
-  name: 'inviteAdmin',
+  name: 'invites',
   template: 'inviteAdmin',
   yieldTemplates: {
+    'inviteAdmin': {to: 'main'},
     'inviteAdmin': {to: 'article'}
   }
 });

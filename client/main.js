@@ -627,6 +627,27 @@ Template.layout.helpers({
 
 });
 
+Template.keywordsManager.helpers({
+
+  keywords: function(){
+    return Keywords.find();
+  },
+  currentKeyword: function(){
+    var currentKeyword = this.params._id;
+    return Keywords.findOne({ _id: currentKeyword });
+  },
+  currentKW: function(){
+    return this.keyword;
+  },
+  preceding: function(){
+    return this.preceding;
+  },
+  proceeding: function(){
+    return this.proceeding;
+  }
+
+});
+
 Template.urlFrame.helpers({
 
   urlId : function(){
@@ -717,7 +738,7 @@ Template.profile.helpers({
 
 
 
-Template.places.helpers({
+Template.place.helpers({
 
   placeDetails: function(){    
 
@@ -849,11 +870,14 @@ Template.urlFrame.onCreated(function(){
 });
 
 
+Template.keywordsManager.onCreated(function(){
+    this.subscribe('keywords');
+
+});
 
 
 
-
-Template.places.onCreated(function () {
+Template.place.onCreated(function () {
   this.name = new ReactiveVar( null );
   this.address = new ReactiveVar( null );
   this.loc = new ReactiveVar( null );
@@ -919,7 +943,7 @@ Template.places.onCreated(function () {
 
 
 
-Template.places.onRendered(function(){
+Template.place.onRendered(function(){
   PROFILE.set(location.pathname);
 });
 Template.urlFrame.onRendered(function(){
@@ -1534,6 +1558,19 @@ Template.layout.events({
 
     $('.'+idOfToggler).toggleClass('secret');
 
+    const layoutTemplate = Template.instance();
+
+    if(!layoutTemplate.mainDisplayed.get()){
+      if(idOfToggler!=='urlbar'&&idOfToggler!=='gmap_loc'&&idOfToggler!=='gmap_search_cont'){
+        $('#toggle_main #open_main').trigger('click');
+      }      
+    }
+
+
+  },
+  'click #back_i': function(e){
+
+    window.history.back();
 
   }
   /*
@@ -1563,13 +1600,14 @@ Template.matchingList.events({
     var lat = e.target.getAttribute("data-lat");
     var lng = e.target.getAttribute("data-lng");
     var loc = getLatLngFromString(lat, lng);
-    GoogleMaps.maps.mapPage.instance.panTo(loc);
-
+    if(parseFloat(lat)&&parseFloat(lng)){
+      GoogleMaps.maps.mapPage.instance.panTo(loc);
+    }
     var markers = MARKERS.get();
     var profileName = e.target.getAttribute("data-profileName");
     $(markers).each(function(){
       if(this.bizNameUrl === profileName){
-        $(this).trigger('click');
+        new google.maps.event.trigger( this, 'click' );
       }
     });
 
@@ -1579,12 +1617,16 @@ Template.matchingList.events({
     var lat = e.target.getAttribute("data-lat");
     var lng = e.target.getAttribute("data-lng");
     var loc = getLatLngFromString(lat, lng);
-    GoogleMaps.maps.mapPage.instance.panTo(loc);
+
+    if(parseFloat(lat)&&parseFloat(lng)){
+      GoogleMaps.maps.mapPage.instance.panTo(loc);
+    }
+    
     var bizNameUrl = e.target.getAttribute("data-profileName");
     var placeID = e.target.getAttribute("data-placeId");
 
     if(bizNameUrl === "undefined"){
-      location.pathname = 'places/'+placeID;
+      Router.go('place', { placeId: placeID });
     }else{
       Router.go('profile', { bizNameUrl: bizNameUrl });
     }
@@ -1593,6 +1635,42 @@ Template.matchingList.events({
 });
 
 
+
+
+Template.keywordsManager.onRendered(function(){
+
+  $(document).ready(function(){
+    
+    function kw_manager(){
+      if($('.selectize-control.searchbar.multi.plugin-restore_on_backspace.plugin-remove_button').length){return;}else{
+        if($('#all_kw').length){
+          $('#all_kw').selectize({
+            maxItems: 200,
+            onChange: kwChange,
+            create: function(input) {
+              var path = input;
+              var userId = Meteor.userId();
+              var createdAt = new Date();
+              var pre = 'prepoops';
+              var pro = 'propoops';
+              Meteor.call("addKeyword", input, pre, pro, 1, path, userId, createdAt);
+              return {
+                  value: input,
+                  text: input
+              };
+            }
+          });
+        }
+      }
+    }
+
+    kw_manager();
+
+    setTimeout(kw_manager, 333);
+    setTimeout(kw_manager, 999);
+
+  });
+});
 
 
 

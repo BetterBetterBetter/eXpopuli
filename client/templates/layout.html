@@ -46,11 +46,12 @@
   	<i id="close_main" class="mainbutton zmdi zmdi-minus-circle zmdi-hc-2x"></i>
 	</div>
 	
-
+	<div id="back_cont" class="controlMenu {{#if mainDisplayed}}displayed{{/if}}">
+  	<i id="back_i" class="{{#unless mainDisplayed}}secret{{/unless}} mainbutton zmdi zmdi-caret-left-circle zmdi-hc-2x"></i>
+	</div>
 
 
 	<div id="footer">
-		<span><a target="_self" href="{{pathFor 'new'}}">Make a Link</a></span>
 
 		<div id="sysTray">
 
@@ -69,20 +70,25 @@
 				<i id="urlbar_i" class="controlMenu zmdi zmdi-iridescent"></i>
 			</div>	
 			<div id="user_cont" class="controlMenu">
-				<a href="{{pathFor 'accounts'}}">
-					<i id="user_i" class="controlMenu zmdi zmdi-dns"></i>
+				<a href="{{pathFor 'keywordsManager'}}">
+					<i id="user_i" class="controlMenu zmdi zmdi-pin"></i>
 				</a>
-			</div>	
-
- 
+			</div>
+			{{#if isInRole 'admin'}}	
+				<div id="invites_cont" class="controlMenu">
+					<a href="{{pathFor 'invites'}}">
+						<i id="invites_i" class="controlMenu zmdi zmdi-email"></i>
+					</a>
+				</div>
+				<div id="admin_cont" class="controlMenu">
+					<a href="/admin">
+						<i id="admin_i" class="controlMenu zmdi zmdi-storage"></i>
+					</a>
+				</div>
+ 			{{/if}}
 		</div>
 		
 
-
-
-
-
-		<span><a target="_self" href="{{pathFor 'privacy'}}">Privacy Policy</a></span>
 	</div>	
 
 			<input type="text" name="location" class="secret controlMenu middleInput urlbar" id="urlbar" placeholder="Enter URL..." value="{{currentURLiFramed}}">
@@ -162,5 +168,46 @@
 		<div class="sheerBg narrow">
 			{{placesSearchList}}
 		</div>
+	</div>
+</template>
+
+
+<template name="keywordsManager">
+	<div id="keywordsManager" class="sheerBg">
+		<h1>All Keywords</h1>
+		{{#if Template.subscriptionsReady}}
+		  <select id="all_kw"  name="all_kw[]" multiple class="all_kw" placeholder="Keyword filter...">
+				{{#each keywords}}
+					<option value="{{keyword}}">{{keyword}}</option>
+				{{/each}}
+			</select>
+		{{/if}}
+		<table id="keywordsManagerTable">
+      <colgroup>
+        <col width="33%">
+        <col width="33%">
+        <col width="33%">
+      </colgroup>
+			<tr>
+				<th>Preceding</th>
+				<th>Keyword</th>
+				<th>Proceeding</th>
+			</tr>
+			<tr>
+				<td>
+					<textarea>
+						{{preceding}}
+					</textarea>
+				</td>
+				<td>
+					<h3>{{currentKW}}</h3>
+				</td>
+				<td>
+					<textarea>
+						{{proceeding}}
+					</textarea>
+				</td>
+			</tr>
+		</table>
 	</div>
 </template>
