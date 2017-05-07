@@ -116,7 +116,7 @@ Keywords.allow({
   }
 });
 
-
+Sortable.collections = Listings;
 
 Meteor.methods({
 

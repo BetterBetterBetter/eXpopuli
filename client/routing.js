@@ -83,7 +83,21 @@ Router.route('/keywords/:_id', {
       return Keywords.findOne({ _id: id });
     }
 });
-
+Router.route('/create/keyword', {
+    name: 'createKW',
+    template: 'createKW',
+    subscriptions: function(){
+      return Meteor.subscribe("keywords");
+    },
+    yieldTemplates: {
+      'createKW': {to: 'article'}
+    },
+    seo: {
+     title: {
+      text: 'Create Keyword'
+      }
+    }
+});
 
 Router.route('/listings', {
     name: 'allListings',

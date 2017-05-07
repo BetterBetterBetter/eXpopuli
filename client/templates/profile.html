@@ -18,9 +18,9 @@
 
     </fieldset>
 
-	{{#if isCurrentUser userId}}<h1><a target="_self" href="{{pathFor 'updateListing'}}">Edit Your Link</a></h1>{{else}}
-		{{> footer}}
-		{{/if}}
+	{{#if isCurrentUser userId}}
+    <h1><a target="_self" href="{{pathFor 'updateListing'}}">Edit Your Link</a></h1>
+	{{/if}}
 
 <div class="none _id" data="notclicked">{{_id}}</div>
 
@@ -53,8 +53,10 @@
       </fieldset>
        
       <p id="types">{{types}}</p>
-  
-      <button id="saveListingFromPlace" type="submit" class="btn btn-primary">Save</button>
+      
+      {{#if currentUser}}
+        <button id="saveListingFromPlace" type="submit" class="btn btn-primary">Save</button>
+      {{/if}}
     </fieldset>
 
     <div id="location" class="none location" data="notclicked">{{location}}</div> 

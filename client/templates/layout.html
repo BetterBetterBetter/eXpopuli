@@ -176,11 +176,9 @@
 	<div id="keywordsManager" class="sheerBg">
 		<h1>All Keywords</h1>
 		{{#if Template.subscriptionsReady}}
-		  <select id="all_kw"  name="all_kw[]" multiple class="all_kw" placeholder="Keyword filter...">
-				{{#each keywords}}
-					<option value="{{keyword}}">{{keyword}}</option>
-				{{/each}}
-			</select>
+   		{{#sortable items=keywords options=KW_all_sortableOptions}}
+    		<div class="item my-handle allKW" data-id="{{_id}}">{{keyword}}</div>
+  		{{/sortable}}
 		{{/if}}
 		<table id="keywordsManagerTable">
       <colgroup>
@@ -188,26 +186,47 @@
         <col width="33%">
         <col width="33%">
       </colgroup>
-			<tr>
-				<th>Preceding</th>
-				<th>Keyword</th>
-				<th>Proceeding</th>
-			</tr>
-			<tr>
-				<td>
-					<textarea>
-						{{preceding}}
-					</textarea>
-				</td>
-				<td>
-					<h3>{{currentKW}}</h3>
-				</td>
-				<td>
-					<textarea>
-						{{proceeding}}
-					</textarea>
-				</td>
-			</tr>
+      <thead>
+				<tr>
+					<th>Preceding</th>
+					<th>Keyword</th>
+					<th>Proceeding</th>
+				</tr>
+			</thead> 
+			<tbody>
+				<tr>
+					<td>
+     		  	{{#sortable items=keywords options=pre_sortableOptions}}
+          		<div class="item my-handle {{preceding}}">{{keyword}}</div>
+        		{{/sortable}}
+					</td>
+					<td>
+						<h1>{{currentKW}}</h1>
+					</td>
+					<td>
+     		  	{{#sortable items=keywords options=pro_sortableOptions}}
+          		<div class="item my-handle {{proceeding}}">{{keyword}}</div>
+        		{{/sortable}}
+					</td>
+				</tr>
+			</tbody>
 		</table>
+		{{#if currentUser}}
+			<a href={{pathFor 'createKW'}}>
+      	<button id="newKeyword" type="submit" class="btn btn-primary">New Keyword</button>
+			</a>
+		{{/if}}
+
 	</div>
+
+</template>
+
+
+
+
+<template name="createKW">
+	
+	  {{> quickForm collection="Keywords" id="insertKeywordForm" type="insert"}}
+
+
 </template>

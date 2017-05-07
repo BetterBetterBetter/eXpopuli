@@ -4,6 +4,7 @@ import { ReactiveDict } from 'meteor/reactive-dict';
 
 modalActive = false;
 bizName = '';
+LAST_ADDED_KW_ID = '';
 
 PATHNAME = new ReactiveVar(location.pathname);
 PLACES_SEARCH = new ReactiveVar("");
@@ -11,6 +12,7 @@ OVERFLOW_SET = new ReactiveVar(false);
 MARKERS = new ReactiveVar();
 PROFILE = new ReactiveVar('');
 KEYWORDS = new ReactiveVar([]);
+KEYWORD = new ReactiveVar('');
 
 
 VIEW_HEIGHT = $(window).height();
@@ -87,53 +89,7 @@ function kwChange(){
   var container = this.$wrapper;
   var items = this.items;
   var id = this.$input.attr('id');
-  var idNum = parseInt(id.match(/\d+$/)[0]);
-  var twoHidden = $('.kw2').hasClass('secret');
-  var threeHidden = $('.kw3').hasClass('secret');
-
-  setTimeout(function(){
-    var t1 = $('#kw_tier1').val();
-    var t2 = $('#kw_tier2').val();
-    var t3 = $('#kw_tier3').val();
-    var kwCat = t1.concat(t2, t3);
-    KEYWORDS.set(kwCat);
-  },333);
-
-
-  if(this.items.length){
-
-    if(idNum === 1){       
-      if( twoHidden ){
-        $('.kw2').toggleClass('secret');
-      }
-    }else if(idNum === 2){
-     if( threeHidden ){
-        $('.kw3').toggleClass('secret');
-      }
-    }else if(idNum === 3){
-
-    }
-
-  }else{
-    
-    if(idNum === 1){
-      this.clear();       
-      if( !twoHidden ){
-        $('.kw2').toggleClass('secret');
-      }
-      if( !threeHidden ){
-        $('.kw3').toggleClass('secret');
-      }
-    }else if(idNum === 2){
-     if( !threeHidden ){
-        $('.kw3').toggleClass('secret');
-      }
-    }else if(idNum === 3){
-
-    }
-
-  }
-  setTimeout(kwLines, 1111);
+  
 }
 
 
@@ -634,6 +590,8 @@ Template.keywordsManager.helpers({
   },
   currentKeyword: function(){
     var currentKeyword = this.params._id;
+    var currKW = Keywords.findOne({ _id: currentKeyword }).keyword;
+    KEYWORD.set(currKW);
     return Keywords.findOne({ _id: currentKeyword });
   },
   currentKW: function(){
@@ -644,8 +602,41 @@ Template.keywordsManager.helpers({
   },
   proceeding: function(){
     return this.proceeding;
+  },
+  KW_all_sortableOptions: function(){
+    return{ 
+    group: {
+      name: "allKW",
+      pull: true,
+      put: false
+      },
+    sort: true
+    }
+  },
+  pre_sortableOptions: function(){
+    var currentKeyword = KEYWORD.get();
+    return{ 
+    selector: { proceeding: currentKeyword },
+    group: {
+      name: "preKW",
+      pull: true,
+      put: true
+      },
+    sort: true
+    }
+  },
+  pro_sortableOptions: function(){
+    var currentKeyword = KEYWORD.get();
+    return{ 
+    group: {
+      name: "proKW",
+      pull: true,
+      put: true
+      },
+    sort: true,
+    selector: { preceding: currentKeyword }
+    }
   }
-
 });
 
 Template.urlFrame.helpers({
@@ -872,7 +863,6 @@ Template.urlFrame.onCreated(function(){
 
 Template.keywordsManager.onCreated(function(){
     this.subscribe('keywords');
-
 });
 
 
@@ -1592,6 +1582,20 @@ Template.layout.events({
 });
 
 
+Template.keywordsManager.events({
+
+  'click .allKW':function(e, template){
+ 
+    var id = e.target.getAttribute('data-id');
+    var currentKeyword = Keywords.findOne({_id: id}).keyword;
+    KEYWORD.set(currentKeyword);
+    Router.go('keywordManager', {_id: id});
+
+  }
+
+});
+
+
 
 Template.matchingList.events({
 
@@ -1621,7 +1625,7 @@ Template.matchingList.events({
     if(parseFloat(lat)&&parseFloat(lng)){
       GoogleMaps.maps.mapPage.instance.panTo(loc);
     }
-    
+
     var bizNameUrl = e.target.getAttribute("data-profileName");
     var placeID = e.target.getAttribute("data-placeId");
 
@@ -1644,22 +1648,17 @@ Template.keywordsManager.onRendered(function(){
     function kw_manager(){
       if($('.selectize-control.searchbar.multi.plugin-restore_on_backspace.plugin-remove_button').length){return;}else{
         if($('#all_kw').length){
-          $('#all_kw').selectize({
+          var selectize = $('#all_kw').selectize({
             maxItems: 200,
             onChange: kwChange,
-            create: function(input) {
-              var path = input;
-              var userId = Meteor.userId();
-              var createdAt = new Date();
-              var pre = 'prepoops';
-              var pro = 'propoops';
-              Meteor.call("addKeyword", input, pre, pro, 1, path, userId, createdAt);
-              return {
-                  value: input,
-                  text: input
-              };
-            }
+            create: false
           });
+          var selectize_all_KWs = selectize[0].selectize;
+          var allKW_options = selectize_all_KWs.options;
+          var allKWs = $.map(allKW_options, function(value, index) {
+                return [value.value]; 
+            });
+          selectize_all_KWs.setValue(allKWs, false);
         }
       }
     }
