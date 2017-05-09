@@ -1,10 +1,11 @@
 import { Template } from 'meteor/templating';
 import { ReactiveVar } from 'meteor/reactive-var';
 import { ReactiveDict } from 'meteor/reactive-dict';
+import Sortable from 'sortablejs';
+
 
 modalActive = false;
 bizName = '';
-LAST_ADDED_KW_ID = '';
 
 PATHNAME = new ReactiveVar(location.pathname);
 PLACES_SEARCH = new ReactiveVar("");
@@ -55,6 +56,16 @@ Meteor.startup(function() {
 getLatLngFromString = function (lat,lng){
  return new google.maps.LatLng(parseFloat(lat), parseFloat(lng)); 
 }
+
+initSortable = function (sortableClass){
+  let sortableList = $( sortableClass );
+  sortableList.sortable( 'destroy' );
+  sortableList.sortable();
+  sortableList.sortable().off( 'sortupdate' );
+  sortableList.sortable().on( 'sortupdate', function() {
+    updateIndexes( '.sortable' );
+  });
+};
 
 smoothZoom = function (map, max, cnt) {
     if (cnt >= max) {
@@ -179,6 +190,49 @@ function kwLines(){
     }); 
 
   });
+}
+
+
+
+function kwManagerLines(){
+
+  $('.line').remove();
+  $('.preceding.item').each(function(i){
+    var rect1 = $(this)[0].getBoundingClientRect();
+    var xOffset1 = rect1.width/2;
+    var yOffset1 = rect1.height/2;
+    var x1 = rect1.left + xOffset1;
+    var y1 = rect1.top + yOffset1;
+
+    $('#currentKeyword').each(function(i){
+      var rect2 = $(this)[0].getBoundingClientRect();
+      var xOffset2 = rect2.width/2;
+      var yOffset2 = rect2.height/2;
+      var x2 = rect2.left + xOffset2;
+      var y2 = rect2.top + yOffset2;
+      createLine(x1,y1,x2,y2);
+
+      $('.proceeding.item').each(function(i){
+        var rect4 = $(this)[0].getBoundingClientRect();
+        var xOffset4 = rect4.width/2;
+        var yOffset4 = rect4.height/2;
+        var x4 = rect4.left + xOffset4;
+        var y4 = rect4.top + yOffset4;
+        createLine(x2,y2,x4,y4);
+      });
+
+    }); 
+
+  });
+}
+
+
+
+
+
+
+
+
 
 /*
   $('.kw2 .item').each(function(i){
@@ -199,7 +253,7 @@ function kwLines(){
 
   });
 */
-}
+
 
 
 
@@ -603,38 +657,26 @@ Template.keywordsManager.helpers({
   proceeding: function(){
     return this.proceeding;
   },
-  KW_all_sortableOptions: function(){
-    return{ 
-    group: {
-      name: "allKW",
-      pull: true,
-      put: false
-      },
-    sort: true
-    }
+  precedingKW: function(){
+    var currPre = this.preceding;
+    return Keywords.find({keyword: {"$in" : currPre} });
   },
-  pre_sortableOptions: function(){
-    var currentKeyword = KEYWORD.get();
-    return{ 
-    selector: { proceeding: currentKeyword },
-    group: {
-      name: "preKW",
-      pull: true,
-      put: true
-      },
-    sort: true
-    }
+  proceedingKW: function(){
+    var currPro = this.proceeding;
+    return Keywords.find({keyword: {"$in" : currPro} });
   },
-  pro_sortableOptions: function(){
+  isInPath: function(){
     var currentKeyword = KEYWORD.get();
-    return{ 
-    group: {
-      name: "proKW",
-      pull: true,
-      put: true
-      },
-    sort: true,
-    selector: { preceding: currentKeyword }
+    var currKW_assoc = $('#currentKeyword').attr('data-assoc');
+    var assocArr = currKW_assoc.split(',');
+    if(assocArr.includes(this.keyword)){
+      return Spacebars.SafeString('ignore');
+    }else{
+      if(currentKeyword===this.keyword){
+        return Spacebars.SafeString('ignore');
+      }else{
+        return '';
+      }
     }
   }
 });
@@ -1587,10 +1629,58 @@ Template.keywordsManager.events({
   'click .allKW':function(e, template){
  
     var id = e.target.getAttribute('data-id');
+    var currKW_cursor = Keywords.findOne({_id: id});
+    var currentKeyword = currKW_cursor.keyword;
+    var preArr = currKW_cursor.preceding;
+    var proArr = currKW_cursor.proceeding;
+
+
+    KEYWORD.set(currentKeyword);
+    Router.go('keywordManager', {_id: id});
+
+    $('#allKW_cont .allKW').each(function(e){
+      $(this).removeClass('active');
+    });
+    $(e.target).addClass('active');
+
+    kwManagerLines();
+  },
+  'click .selectKW':function(e, template){
+    
+    var id = $(e.target).parent('.item[data-id]').attr('data-id');
     var currentKeyword = Keywords.findOne({_id: id}).keyword;
     KEYWORD.set(currentKeyword);
     Router.go('keywordManager', {_id: id});
 
+    $('#allKW_cont .allKW').each(function(e){
+      $(this).removeClass('active');
+    });
+    $(".allKW[data-id="+id+"]").addClass('active');
+
+    kwManagerLines();
+  },
+  'click #removeKW': function(e, template){
+    if(confirm("Delete Keyword? There's no way to restore it. If you just want to remove it from a path, view its precedent and remove it from there.")){
+      Meteor.call('removeKeyword', this._id);
+    }
+  },
+  'click .remove_association': function(e, template){
+
+    var id = $(e.target).parent('.item[data-id]').attr('data-id');
+    var currentKeyword = $('#currentKeyword').attr('data-kw');
+    var removedAssoc = Keywords.findOne({_id: id}).keyword;
+    var PreOrPro = $(e.target).parents('td').attr('id').replace('KW_cont','');
+
+    if(confirm("Delete association? This does not remove the keyword, only its relationship. To remove a keyword, select it first.")){
+
+      if(PreOrPro === 'proceeding'){
+        Meteor.call('rmKeywordProc', id, removedAssoc);
+
+      }else if(PreOrPro === 'preceding') { 
+        Meteor.call('rmKeywordPrec', id, removedAssoc);
+        KEYWORD.set(currentKeyword+" ");
+      }
+    }    
   }
 
 });
@@ -1661,6 +1751,67 @@ Template.keywordsManager.onRendered(function(){
           selectize_all_KWs.setValue(allKWs, false);
         }
       }
+
+      var currentKW = $('#currentKeyword').attr('data-kw');
+      KEYWORD.set(currentKW);
+
+
+      var allKW_cont = document.getElementById('allKW_cont');
+      var allKW_sortable = Sortable.create(allKW_cont,{
+        group: { name: "allKW", pull:'clone', put: false },
+        animation: 333, 
+        filter: ".ignore",
+        preventOnFilter: true,
+        draggable: ".item",
+        ghostClass: "sortable-ghost",
+        chosenClass: "sortable-chosen",  
+        dragClass: "sortable-drag", 
+        dataIdAttr: 'data-sortable-id'
+
+      });
+      var precedingKW_cont = document.getElementById('precedingKW_cont');
+      var preSortable = Sortable.create(precedingKW_cont,{
+        group: { name: "precedingKW", pull: false, put: ["allKW"] },
+        animation: 333, 
+        dataIdAttr: 'data-sortable-id',
+        onAdd: function(e){
+
+          var id = $(e.item).attr('data-id');
+          var currentKeyword = KEYWORD.get();
+          var currentKW_id = $('#currentKeyword').attr('data-id');
+          var addedAssocKW = Keywords.findOne({_id: id}).keyword;
+
+          if(confirm("Add association? Should "+addedAssocKW+" precede "+currentKeyword+"?")){
+
+            Meteor.call('addKeywordPrec', currentKW_id, addedAssocKW);
+            $('#keywordsManagerTable .allKW').addClass('secret').delay(333).remove();
+            KEYWORD.set(currentKeyword+" ");
+          } 
+          
+        }
+      });
+      var proceedingKW_cont = document.getElementById('proceedingKW_cont');
+      var proSortable = Sortable.create(proceedingKW_cont,{
+        group: { name: "proceedingKW", pull: false, put: ["allKW"] },
+        animation: 333, 
+        dataIdAttr: 'data-sortable-id',
+        onAdd: function(e){
+
+          var id = $(e.item).attr('data-id');
+          var currentKeyword = KEYWORD.get();
+          var currentKW_id = $('#currentKeyword').attr('data-id');
+          var addedAssocKW = Keywords.findOne({_id: id}).keyword;
+
+          if(confirm("Add association? Should "+addedAssocKW+" follow "+currentKeyword+"?")){
+
+            Meteor.call('addKeywordProc', currentKW_id, addedAssocKW);
+            $('#keywordsManagerTable .allKW').addClass('secret').delay(333).remove();
+            KEYWORD.set(currentKeyword+" ");
+          }  
+          
+        }
+      });
+
     }
 
     kw_manager();
@@ -1924,12 +2075,6 @@ Template.urlFrame.onRendered(function(){
 });
 
 */
-
-
-
-
-
-
 
 
 

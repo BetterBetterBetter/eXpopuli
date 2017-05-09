@@ -1048,3 +1048,61 @@ div.line
 		height 20vh 
 	& *
 		text-align center 
+		
+
+#allKW_cont
+	height 10em
+	height 30vh
+	overflow auto
+	background rgba(222,222,222,.4)
+	.ignore
+		cursor not-allowed
+		opacity .3
+	i
+		display none
+	.allKW
+		display inline-block
+		font-size .7em
+		background #000
+		background rgba(0,0,0,.7)
+		border rgba(0,0,0,.7) 2px solid
+	 border-radius 3em
+	 margin .5em			
+  padding .1em
+  display inline-block
+  padding-left .3em
+  padding-right .3em
+  transition 333ms all ease
+  &.active
+  	background #000
+  	border #777 2px solid
+  	&.ignore 
+  		background #000!important
+  		opacity 1!important
+
+
+
+#proceedingKW_cont
+	.remove_association
+		&.right
+			display none
+	.selectKW
+		&.left
+			display none
+
+#precedingKW_cont
+	.remove_association
+		&.left
+			display none
+	.selectKW
+		&.right
+			display none
+
+			
+#removeKW
+	font-size 1em
+	color #fff
+	transition 333ms all ease
+	&:hover,&:active
+		color #f30000
+		font-size 2em

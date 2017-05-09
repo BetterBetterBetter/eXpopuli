@@ -15,7 +15,8 @@
     "isotope-packery": "^2.0.0",
     "jquery": "^2.2.3",
     "masonry-layout": "^4.1.0",
-    "meteor-node-stubs": "~0.2.0",
-    "outlayer": "^2.1.0"
+    "meteor-node-stubs": "^0.2.6",
+    "outlayer": "^2.1.0",
+    "sortablejs": "^1.5.1"
   }
 }

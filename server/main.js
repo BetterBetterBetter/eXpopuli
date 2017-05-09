@@ -113,10 +113,13 @@ SavedSearches.allow({
 Keywords.allow({
   insert: function (userId, doc) {
       return true;
+  },
+  update: function (userId, doc) {
+      return true;
   }
 });
 
-Sortable.collections = Listings;
+
 
 Meteor.methods({
 
@@ -187,6 +190,7 @@ addKeyword: function (keyword, pre, pro, tier, path, userId, createdAt){
   });
 
  }
+ 
 
 
 

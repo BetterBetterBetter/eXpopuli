@@ -79,7 +79,6 @@ Router.route('/keywords/:_id', {
     },
     data: function(){
       var id = this.params._id;
-      console.log(Keywords.findOne({ _id: id }));
       return Keywords.findOne({ _id: id });
     }
 });

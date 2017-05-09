@@ -175,11 +175,19 @@
 <template name="keywordsManager">
 	<div id="keywordsManager" class="sheerBg">
 		<h1>All Keywords</h1>
-		{{#if Template.subscriptionsReady}}
-   		{{#sortable items=keywords options=KW_all_sortableOptions}}
-    		<div class="item my-handle allKW" data-id="{{_id}}">{{keyword}}</div>
-  		{{/sortable}}
-		{{/if}}
+		<div id="allKW_cont">
+			{{#if Template.subscriptionsReady}}
+				{{#each keywords}}
+	    		<div class="item my-handle sortable allKW {{isInPath}}" data-id="{{_id}}">
+    				<i class="zmdi zmdi-close remove_association left"></i>
+    				<i class="selectKW zmdi zmdi-dot-circle left"></i>
+    				{{keyword}}
+    				<i class="zmdi zmdi-close remove_association right"></i>
+						<i class="selectKW zmdi zmdi-dot-circle right"></i>
+	    		</div> 
+	    	{{/each}}
+			{{/if}}
+		</div>
 		<table id="keywordsManagerTable">
       <colgroup>
         <col width="33%">
@@ -195,18 +203,44 @@
 			</thead> 
 			<tbody>
 				<tr>
-					<td>
-     		  	{{#sortable items=keywords options=pre_sortableOptions}}
-          		<div class="item my-handle {{preceding}}">{{keyword}}</div>
-        		{{/sortable}}
+					<td id="precedingKW_cont">
+						{{#each precedingKW}}
+          		<div data-id="{{_id}}" class="item my-handle sortable preceding">
+          			{{#if currentUser}}
+          				<i class="zmdi zmdi-close remove_association left"></i>
+          				<i class="selectKW zmdi zmdi-dot-circle left"></i>
+          				{{keyword}}
+          				<i class="zmdi zmdi-close remove_association right"></i>
+									<i class="selectKW zmdi zmdi-dot-circle right"></i>
+								{{/if}}
+          		</div>
+						{{/each}}
 					</td>
 					<td>
-						<h1>{{currentKW}}</h1>
+						<h1 id="currentKeyword" data-id="{{_id}}" data-kw="{{keyword}}" data-assoc="{{preceding}},{{proceeding}}
+						">
+						<br>{{currentKW}}<br>			
+						{{#if isInRole 'admin'}}	
+							<i id="removeKW" class="zmdi zmdi-close-circle-o"></i>
+						{{else}}
+							{{#if isCurrentUser userId}}
+								<i id="removeKW" class="zmdi zmdi-close-circle-o"></i>
+							{{/if}}
+						{{/if}}
+						</h1>
 					</td>
-					<td>
-     		  	{{#sortable items=keywords options=pro_sortableOptions}}
-          		<div class="item my-handle {{proceeding}}">{{keyword}}</div>
-        		{{/sortable}}
+					<td id="proceedingKW_cont">
+						{{#each proceedingKW}}
+          		<div data-id="{{_id}}" class="item my-handle proceeding">
+          			{{#if currentUser}}
+          				<i class="zmdi zmdi-close remove_association left"></i>
+          				<i class="selectKW zmdi zmdi-dot-circle left"></i>
+          				{{keyword}}
+          				<i class="zmdi zmdi-close remove_association right"></i>
+									<i class="selectKW zmdi zmdi-dot-circle right"></i>
+								{{/if}}
+          		</div>
+          	{{/each}}
 					</td>
 				</tr>
 			</tbody>
@@ -215,6 +249,7 @@
 			<a href={{pathFor 'createKW'}}>
       	<button id="newKeyword" type="submit" class="btn btn-primary">New Keyword</button>
 			</a>
+			<br>
 		{{/if}}
 
 	</div>
