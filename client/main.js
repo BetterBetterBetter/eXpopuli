@@ -649,12 +649,15 @@ Template.keywordsManager.helpers({
     return Keywords.findOne({ _id: currentKeyword });
   },
   currentKW: function(){
+    KEYWORD.get();
     return this.keyword;
   },
   preceding: function(){
+    KEYWORD.get();
     return this.preceding;
   },
   proceeding: function(){
+    KEYWORD.get();
     return this.proceeding;
   },
   precedingKW: function(){
@@ -665,8 +668,17 @@ Template.keywordsManager.helpers({
     var currPro = this.proceeding;
     return Keywords.find({keyword: {"$in" : currPro} });
   },
+  isActive: function(){
+    var currKw = KEYWORD.get();
+    if(this.keyword === currKw){
+      return Spacebars.SafeString('active');
+    }else{
+      return '';
+    }
+  },
   isInPath: function(){
-    var currentKeyword = KEYWORD.get();
+    KEYWORD.get(); 
+    var currentKeyword = $('#currentKeyword').attr('data-kw');
     var currKW_assoc = $('#currentKeyword').attr('data-assoc');
     var assocArr = currKW_assoc.split(',');
     if(assocArr.includes(this.keyword)){
@@ -905,6 +917,24 @@ Template.urlFrame.onCreated(function(){
 
 Template.keywordsManager.onCreated(function(){
     this.subscribe('keywords');
+
+  var instance = this;
+  /*
+  if(instance.data){
+    var urlProfile = location.pathname.replace('/url/','');
+    PROFILE.set(urlProfile);
+  }
+  */
+  instance.autorun(function(){
+
+    var currKw = KEYWORD.get();
+    var subscription = instance.subscribe('keywords');
+
+    if (subscription.ready()) {
+      var domCurrKw = $('#currentKeyword').attr('data-kw');
+      KEYWORDS.set(domCurrKw);
+    }
+  });
 });
 
 
@@ -1645,8 +1675,8 @@ Template.keywordsManager.events({
 
     kwManagerLines();
   },
+
   'click .selectKW':function(e, template){
-    
     var id = $(e.target).parent('.item[data-id]').attr('data-id');
     var currentKeyword = Keywords.findOne({_id: id}).keyword;
     KEYWORD.set(currentKeyword);
@@ -1656,28 +1686,30 @@ Template.keywordsManager.events({
       $(this).removeClass('active');
     });
     $(".allKW[data-id="+id+"]").addClass('active');
-
     kwManagerLines();
   },
+
   'click #removeKW': function(e, template){
     if(confirm("Delete Keyword? There's no way to restore it. If you just want to remove it from a path, view its precedent and remove it from there.")){
       Meteor.call('removeKeyword', this._id);
     }
   },
+
   'click .remove_association': function(e, template){
 
     var id = $(e.target).parent('.item[data-id]').attr('data-id');
     var currentKeyword = $('#currentKeyword').attr('data-kw');
+    var currKwId = $('#currentKeyword').attr('data-id');
     var removedAssoc = Keywords.findOne({_id: id}).keyword;
     var PreOrPro = $(e.target).parents('td').attr('id').replace('KW_cont','');
 
     if(confirm("Delete association? This does not remove the keyword, only its relationship. To remove a keyword, select it first.")){
 
       if(PreOrPro === 'proceeding'){
-        Meteor.call('rmKeywordProc', id, removedAssoc);
+        Meteor.call('rmKeywordProc', currKwId, removedAssoc);
 
       }else if(PreOrPro === 'preceding') { 
-        Meteor.call('rmKeywordPrec', id, removedAssoc);
+        Meteor.call('rmKeywordPrec', currKwId, removedAssoc);
         KEYWORD.set(currentKeyword+" ");
       }
     }    
