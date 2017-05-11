@@ -12,8 +12,8 @@ PLACES_SEARCH = new ReactiveVar("");
 OVERFLOW_SET = new ReactiveVar(false);
 MARKERS = new ReactiveVar();
 PROFILE = new ReactiveVar('');
-KEYWORDS = new ReactiveVar([]);
-KEYWORD = new ReactiveVar('');
+KEYWORD = new ReactiveVar();
+KEYWORD_ASSOC = new ReactiveVar([]);
 
 
 VIEW_HEIGHT = $(window).height();
@@ -536,7 +536,7 @@ Template.layout.helpers({
     }
   },
   inPathName: function(){
-    KEYWORDS.get();
+    KEYWORD.get();
 
 
     var t1 = $('#kw_tier1').val();
@@ -640,13 +640,23 @@ Template.layout.helpers({
 Template.keywordsManager.helpers({
 
   keywords: function(){
+    Template.instance().autorun(()=>{
+      KEYWORD.get();
+      Meteor.subscribe('keywords').stop();
+      Meteor.subscribe('keywords');
+      return Keywords.find();
+    });
     return Keywords.find();
   },
   currentKeyword: function(){
-    var currentKeyword = this.params._id;
-    var currKW = Keywords.findOne({ _id: currentKeyword }).keyword;
+    if(this._id){
+      var id = this._id;
+    }else{
+      var id = this.params._id
+    }
+    var currKW = Keywords.findOne({ _id: id });
     KEYWORD.set(currKW);
-    return Keywords.findOne({ _id: currentKeyword });
+    return currKW;
   },
   currentKW: function(){
     KEYWORD.get();
@@ -669,25 +679,30 @@ Template.keywordsManager.helpers({
     return Keywords.find({keyword: {"$in" : currPro} });
   },
   isActive: function(){
-    var currKw = KEYWORD.get();
+    if(KEYWORD.get()){
+      var currKw = KEYWORD.get().keyword;;
+    }else{
+      var currKw = this.params.keyword;
+    }
     if(this.keyword === currKw){
       return Spacebars.SafeString('active');
     }else{
       return '';
     }
   },
-  isInPath: function(){
-    KEYWORD.get(); 
-    var currentKeyword = $('#currentKeyword').attr('data-kw');
-    var currKW_assoc = $('#currentKeyword').attr('data-assoc');
-    var assocArr = currKW_assoc.split(',');
-    if(assocArr.includes(this.keyword)){
+  ignore: function(){ 
+    var currentKeyword = KEYWORD.get();
+    var preAss = currentKeyword.preceding;
+    var proAss = currentKeyword.proceeding;
+    var currKW_assoc = preAss.concat(proAss);
+
+    if(currKW_assoc.includes(this.keyword)){
       return Spacebars.SafeString('ignore');
     }else{
-      if(currentKeyword===this.keyword){
+      if(currentKeyword.keyword===this.keyword){
         return Spacebars.SafeString('ignore');
       }else{
-        return '';
+        return ''; 
       }
     }
   }
@@ -916,15 +931,10 @@ Template.urlFrame.onCreated(function(){
 
 
 Template.keywordsManager.onCreated(function(){
-    this.subscribe('keywords');
+    //this.subscribe('keywords');
 
   var instance = this;
-  /*
-  if(instance.data){
-    var urlProfile = location.pathname.replace('/url/','');
-    PROFILE.set(urlProfile);
-  }
-  */
+
   instance.autorun(function(){
 
     var currKw = KEYWORD.get();
@@ -932,7 +942,10 @@ Template.keywordsManager.onCreated(function(){
 
     if (subscription.ready()) {
       var domCurrKw = $('#currentKeyword').attr('data-kw');
-      KEYWORDS.set(domCurrKw);
+      var domCurrAssoc = $('#currentKeyword').attr('data-assoc');
+      var domCurrAssocArr = domCurrAssoc.split(',');
+      //KEYWORD.set(instance.data);
+      //KEYWORD_ASSOC.set(domCurrAssocArr);
     }
   });
 });
@@ -1655,7 +1668,8 @@ Template.layout.events({
 
 
 Template.keywordsManager.events({
-
+//
+// Change KW
   'click .allKW':function(e, template){
  
     var id = e.target.getAttribute('data-id');
@@ -1663,9 +1677,9 @@ Template.keywordsManager.events({
     var currentKeyword = currKW_cursor.keyword;
     var preArr = currKW_cursor.preceding;
     var proArr = currKW_cursor.proceeding;
+    var combinedAssocArr = preArr.concat(proArr); 
 
-
-    KEYWORD.set(currentKeyword);
+    KEYWORD.set(currKW_cursor);
     Router.go('keywordManager', {_id: id});
 
     $('#allKW_cont .allKW').each(function(e){
@@ -1675,11 +1689,17 @@ Template.keywordsManager.events({
 
     kwManagerLines();
   },
-
+//
+// Change KW
   'click .selectKW':function(e, template){
     var id = $(e.target).parent('.item[data-id]').attr('data-id');
-    var currentKeyword = Keywords.findOne({_id: id}).keyword;
-    KEYWORD.set(currentKeyword);
+    var currKW_cursor = Keywords.findOne({_id: id});
+    var currentKeyword = currKW_cursor.keyword;
+    var preArr = currKW_cursor.preceding;
+    var proArr = currKW_cursor.proceeding;
+    var combinedAssocArr = preArr.concat(proArr); 
+    KEYWORD.set(currKW_cursor);
+
     Router.go('keywordManager', {_id: id});
 
     $('#allKW_cont .allKW').each(function(e){
@@ -1690,7 +1710,7 @@ Template.keywordsManager.events({
   },
 
   'click #removeKW': function(e, template){
-    if(confirm("Delete Keyword? There's no way to restore it. If you just want to remove it from a path, view its precedent and remove it from there.")){
+    if(confirm("\nDelete Keyword?\n\nThere's no way to restore it.\n\nIf you just want to remove it from a path, view its precedent and remove it from there.")){
       Meteor.call('removeKeyword', this._id);
     }
   },
@@ -1698,19 +1718,26 @@ Template.keywordsManager.events({
   'click .remove_association': function(e, template){
 
     var id = $(e.target).parent('.item[data-id]').attr('data-id');
-    var currentKeyword = $('#currentKeyword').attr('data-kw');
     var currKwId = $('#currentKeyword').attr('data-id');
+    var currentKeyword = Keywords.findOne({_id: currKwId});
     var removedAssoc = Keywords.findOne({_id: id}).keyword;
     var PreOrPro = $(e.target).parents('td').attr('id').replace('KW_cont','');
 
-    if(confirm("Delete association? This does not remove the keyword, only its relationship. To remove a keyword, select it first.")){
+    if(confirm("\nDelete association of "+currentKeyword.keyword+" and "+removedAssoc+"?\n\nThis does not remove the keyword, only its relationship. \n\nTo remove a keyword, select it first.")){
 
       if(PreOrPro === 'proceeding'){
         Meteor.call('rmKeywordProc', currKwId, removedAssoc);
+        Meteor.call('rmKeywordPrec', id, currentKeyword.keyword);
 
+        currentKeyword.proceeding = currentKeyword.proceeding.filter(e => e !== removedAssoc);
+
+        KEYWORD.set(currentKeyword);
+      
       }else if(PreOrPro === 'preceding') { 
         Meteor.call('rmKeywordPrec', currKwId, removedAssoc);
-        KEYWORD.set(currentKeyword+" ");
+        Meteor.call('rmKeywordProc', id, currentKeyword.keyword);
+        
+        currentKeyword.preceding = currentKeyword.preceding.filter(e => e !== removedAssoc);
       }
     }    
   }
@@ -1785,12 +1812,12 @@ Template.keywordsManager.onRendered(function(){
       }
 
       var currentKW = $('#currentKeyword').attr('data-kw');
-      KEYWORD.set(currentKW);
+      //KEYWORD.set(currentKW);
 
 
       var allKW_cont = document.getElementById('allKW_cont');
       var allKW_sortable = Sortable.create(allKW_cont,{
-        group: { name: "allKW", pull:'clone', put: false },
+        group: { name: "allKW", pull: true, put: false },
         animation: 333, 
         filter: ".ignore",
         preventOnFilter: true,
@@ -1813,11 +1840,16 @@ Template.keywordsManager.onRendered(function(){
           var currentKW_id = $('#currentKeyword').attr('data-id');
           var addedAssocKW = Keywords.findOne({_id: id}).keyword;
 
-          if(confirm("Add association? Should "+addedAssocKW+" precede "+currentKeyword+"?")){
+          if(confirm("\nAdd association?\n\nShould "+addedAssocKW+" precede "+currentKeyword.keyword+"?")){
 
             Meteor.call('addKeywordPrec', currentKW_id, addedAssocKW);
+            Meteor.call('addKeywordProc', id, currentKeyword.keyword);
+
             $('#keywordsManagerTable .allKW').addClass('secret').delay(333).remove();
-            KEYWORD.set(currentKeyword+" ");
+
+            currentKeyword.preceding = currentKeyword.preceding.concat([addedAssocKW]);
+
+            KEYWORD.set(currentKeyword);
           } 
           
         }
@@ -1834,11 +1866,15 @@ Template.keywordsManager.onRendered(function(){
           var currentKW_id = $('#currentKeyword').attr('data-id');
           var addedAssocKW = Keywords.findOne({_id: id}).keyword;
 
-          if(confirm("Add association? Should "+addedAssocKW+" follow "+currentKeyword+"?")){
+          if(confirm("\nAdd association?\n\nShould "+addedAssocKW+" follow "+currentKeyword.keyword+"?")){
 
             Meteor.call('addKeywordProc', currentKW_id, addedAssocKW);
+            Meteor.call('addKeywordPrec', id, currentKeyword.keyword);
+
             $('#keywordsManagerTable .allKW').addClass('secret').delay(333).remove();
-            KEYWORD.set(currentKeyword+" ");
+            
+            currentKeyword.proceeding = currentKeyword.proceeding.concat([addedAssocKW]);
+            KEYWORD.set(currentKeyword);
           }  
           
         }

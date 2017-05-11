@@ -3,7 +3,7 @@
 <body>
 
  
-
+ 
 	{{#if Template.subscriptionsReady}}
 	  <select id="kw_tier1"  name="kw1[]" multiple class="controlMenu searchbar kw1" placeholder="Keyword filter...">
 			{{#each keywords}}
@@ -171,97 +171,4 @@
 	</div>
 </template>
 
-
-<template name="keywordsManager">
-	<div id="keywordsManager" class="sheerBg">
-		<h1>All Keywords</h1>
-		<div id="allKW_cont">
-			{{#if Template.subscriptionsReady}}
-				{{#each keywords}}
-	    		<div class="item my-handle sortable allKW {{isInPath}} {{isActive}}" data-id="{{_id}}">
-    				<i class="zmdi zmdi-close remove_association left"></i>
-    				<i class="selectKW zmdi zmdi-dot-circle left"></i>
-    				{{keyword}}
-    				<i class="zmdi zmdi-close remove_association right"></i>
-						<i class="selectKW zmdi zmdi-dot-circle right"></i>
-	    		</div> 
-	    	{{/each}}
-			{{/if}}
-		</div>
-		<table id="keywordsManagerTable">
-      <colgroup>
-        <col width="33%">
-        <col width="33%">
-        <col width="33%">
-      </colgroup>
-      <thead>
-				<tr>
-					<th>Preceding</th>
-					<th>Keyword</th>
-					<th>Proceeding</th>
-				</tr>
-			</thead> 
-			<tbody>
-				<tr>
-					<td id="precedingKW_cont">
-						{{#each precedingKW}}
-          		<div data-id="{{_id}}" class="item my-handle sortable preceding">
-          			{{#if currentUser}}
-          				<i class="zmdi zmdi-close remove_association left"></i>
-          				<i class="selectKW zmdi zmdi-dot-circle left"></i>
-          				{{keyword}}
-          				<i class="zmdi zmdi-close remove_association right"></i>
-									<i class="selectKW zmdi zmdi-dot-circle right"></i>
-								{{/if}}
-          		</div>
-						{{/each}}
-					</td>
-					<td>
-						<h1 id="currentKeyword" data-id="{{_id}}" data-kw="{{keyword}}" data-assoc="{{preceding}},{{proceeding}}
-						">
-						<br>{{currentKW}}<br>			
-						{{#if isInRole 'admin'}}	
-							<i id="removeKW" class="zmdi zmdi-close-circle-o"></i>
-						{{else}}
-							{{#if isCurrentUser userId}}
-								<i id="removeKW" class="zmdi zmdi-close-circle-o"></i>
-							{{/if}}
-						{{/if}}
-						</h1>
-					</td>
-					<td id="proceedingKW_cont">
-						{{#each proceedingKW}}
-          		<div data-id="{{_id}}" class="item my-handle proceeding">
-          			{{#if currentUser}}
-          				<i class="zmdi zmdi-close remove_association left"></i>
-          				<i class="selectKW zmdi zmdi-dot-circle left"></i>
-          				{{keyword}}
-          				<i class="zmdi zmdi-close remove_association right"></i>
-									<i class="selectKW zmdi zmdi-dot-circle right"></i>
-								{{/if}}
-          		</div>
-          	{{/each}}
-					</td>
-				</tr>
-			</tbody>
-		</table>
-		{{#if currentUser}}
-			<a href={{pathFor 'createKW'}}>
-      	<button id="newKeyword" type="submit" class="btn btn-primary">New Keyword</button>
-			</a>
-			<br>
-		{{/if}}
-
-	</div>
-
-</template>
-
-
-
-
-<template name="createKW">
-	
-	  {{> quickForm collection="Keywords" id="insertKeywordForm" type="insert"}}
-
-
-</template>
+  
