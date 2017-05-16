@@ -13,6 +13,8 @@ OVERFLOW_SET = new ReactiveVar(false);
 MARKERS = new ReactiveVar();
 PROFILE = new ReactiveVar('');
 KEYWORD = new ReactiveVar();
+ACTIVE_KEYWORDS = new ReactiveVar();
+CHANGED_KW = new ReactiveVar('');
 KEYWORD_ASSOC = new ReactiveVar([]);
 
 
@@ -536,30 +538,25 @@ Template.layout.helpers({
     }
   },
   inPathName: function(){
-    KEYWORD.get();
 
+      ACTIVE_KEYWORDS.get();
 
-    var t1 = $('#kw_tier1').val();
-    var t2 = $('#kw_tier2').val();
-    var pathNameArr = this.path.split('/');
-    
-    if(this.tier === 2){
-      if(t1){
-        if(pathNameArr[0].includes(t1[0])){
-          return true;
-        }else{
-          return false;
-        }
+      var isInPath = false;
+
+      var activeKWs = $('#kw_tier1').val();
+
+      if(!activeKWs){
+        isInPath = true;
+      }else{
+        activeKWs.forEach(function(e){
+          if(this===this.keyword){
+            var isInPath = true;    
+          }
+        });
       }
-    }else if(this.tier === 3){
-      if(t2){    
-        if(pathNameArr[1].includes(t2[0])){
-          return true;
-        }else{
-          return false;
-        }
-      }
-    }
+//      ACTIVE_KEYWORDS.set(activeKWs);
+//      debugger;
+      return isInPath;
   },
   currentTemplate: function(){
     var path = Iron.Location.get().path;
@@ -651,7 +648,7 @@ Template.keywordsManager.helpers({
   currentKeyword: function(){
     if(this._id){
       var id = this._id;
-    }else{
+    }else if(this.params){
       var id = this.params._id
     }
     var currKW = Keywords.findOne({ _id: id });
@@ -1062,6 +1059,23 @@ Template.layout.onCreated(function () {
     this.mainOverflow = new ReactiveVar( false );
     this.mainDisplayed = new ReactiveVar( true );
 
+/*
+  var instance = this;
+  instance.autorun(function(){
+    ACTIVE_KEYWORDS.get();
+    
+    var actKWs = $('#kw_tier1').val();
+    if(!actKWs){
+      var actKWs = [];
+      return;
+    }
+    
+    //debugger;
+    ACTIVE_KEYWORDS.set(actKWs);
+  });
+*/
+
+
 
 
 
@@ -1122,13 +1136,7 @@ Template.layout.onCreated(function () {
    });
 
 
-    marker.bizNameUrl = listing.bizNameUrl;
-
-
-
-
-
-
+   marker.bizNameUrl = listing.bizNameUrl;
 
    map.instance.addListener('zoom_changed', function() {
      $('.gm-style-iw').siblings().css("display", "none");
@@ -1687,7 +1695,6 @@ Template.keywordsManager.events({
     });
     $(e.target).addClass('active');
 
-    kwManagerLines();
   },
 //
 // Change KW
@@ -1706,7 +1713,6 @@ Template.keywordsManager.events({
       $(this).removeClass('active');
     });
     $(".allKW[data-id="+id+"]").addClass('active');
-    kwManagerLines();
   },
 
   'click #removeKW': function(e, template){
@@ -1850,6 +1856,7 @@ Template.keywordsManager.onRendered(function(){
             currentKeyword.preceding = currentKeyword.preceding.concat([addedAssocKW]);
 
             KEYWORD.set(currentKeyword);
+
           } 
           
         }
@@ -1901,17 +1908,99 @@ Template.keywordsManager.onRendered(function(){
 
 Template.layout.onRendered(function(){
 
-
   $(document).ready(function(){
 
     function SelectiveKW(){
       if($('.selectize-control.searchbar.multi.plugin-restore_on_backspace.plugin-remove_button').length){return;}else{
         if($('#kw_tier1').length){
           $('#kw_tier1').selectize({
-            maxItems: 1,
+            maxItems: 20,
             singleOverride: true,
             tagType: "TAG_SELECT",
             onChange: kwChange,
+            onItemAdd: function(value, $item) {
+              var allKWs = Keywords.find();
+              var $select = $('#kw_tier1').selectize();
+              var selectize = $select[0].selectize;
+              allKWs.forEach( function(kw, i) {
+                selectize.addOption({
+                  text: kw.keyword,
+                  value: kw.keyword
+                });
+              }); 
+
+              var prevActKWs = ACTIVE_KEYWORDS.get();
+              if(!prevActKWs){
+                prevActKWs = [];
+              }
+              var actKWs = prevActKWs.concat([value]);
+
+              ACTIVE_KEYWORDS.set(actKWs);
+
+              var actKwArr = ACTIVE_KEYWORDS.get();
+              var addedKW = Keywords.findOne({keyword: value });
+             CHANGED_KW.set(addedKW);
+
+              allKWs.forEach( function(kw, i) {
+
+                if(!actKwArr.includes(kw.keyword)){
+
+                  var addedKw = CHANGED_KW.get();
+                  var proceeding = addedKw.proceeding;
+
+                  if(!proceeding.includes(kw.keyword)){
+                    
+                    selectize.removeOption(kw.keyword);
+                    selectize.refreshOptions();
+                  }
+                }
+
+              });
+            },
+            onItemRemove: function(value){
+
+
+              var $select = $('#kw_tier1').selectize();
+              var selectize = $select[0].selectize;
+              var allKWs = Keywords.find(); 
+              
+              var actKwArr = ACTIVE_KEYWORDS.get();
+              var upActArr = actKwArr.filter(function(e) { return e !== value });
+              ACTIVE_KEYWORDS.set(upActArr);
+
+              var rmKw = Keywords.findOne({keyword: value });
+              CHANGED_KW.set(rmKw);
+
+              if(!upActArr.length){ 
+                allKWs.forEach( function(kw, i) {
+                  //add all Kw options
+                  selectize.addOption({
+                      text: kw.keyword,
+                      value: kw.keyword
+                    });
+                });                
+              }else{
+
+                var lastActKw = upActArr[upActArr.length-1];
+                var lastActKwCursor = Keywords.findOne({keyword: lastActKw });
+                var lastPro = lastActKwCursor.proceeding;
+
+                allKWs.forEach( function(kw, i) { 
+                  if(!upActArr.includes(kw.keyword)){
+                    selectize.addOption({
+                      text: kw.keyword,
+                      value: kw.keyword
+                    });
+
+                    if(!lastPro.includes(kw.keyword)){
+                      selectize.removeOption(kw.keyword);
+                      selectize.refreshOptions() 
+                    }
+                  }
+
+                });
+              }
+            },
             create: function(input) {
               var path = input;
               var userId = Meteor.userId();
@@ -1992,6 +2081,8 @@ Template.layout.onRendered(function(){
         }
       } 
       setTimeout(SelectiveKW,333); 
+
+
   });
 
 
