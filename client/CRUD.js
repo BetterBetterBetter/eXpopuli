@@ -37,10 +37,10 @@ Template.updateListing.onCreated(function () {
     if (Template.instance().subscriptionsReady()) {
       var thisId = document.getElementsByClassName('_id')[0].innerHTML;
       var thisListing = Listings.findOne({_id: thisId});
-      var socialMissionHtml = thisListing.socialMission;
-      var industry = thisListing.industry;
-      $('[name="socialMission"]').froalaEditor('html.set', socialMissionHtml);
-      $('[name="industry"]').val(industry);
+      var detailsHtml = thisListing.details;
+      var keywords = thisListing.keywords;
+      $('[name="details"]').froalaEditor('html.set', detailsHtml);
+      $('[name="keywords"]').val(keywords);
       
       $(window).trigger('resize');
       setTimeout(function(){
@@ -83,8 +83,8 @@ Template.updateListing.helpers({
     var currentListing = this.bizName;
     return Listings.find()
   },
-  socialMissionUpdate: function(){
-   var html = this.socialMission;
+  detailsUpdate: function(){
+   var html = this.details;
    return html;
   }
 });
@@ -106,18 +106,18 @@ Template.createListing.events({
 		
 		var bizName = event.target.bizName.value;
   var bizNameUrl = bizName.replace(/ /g,'-');
-		var industry = event.target.industry.value;
+		var keywords = event.target.keywords.value;
   var locationLat = $(event.target).find('[data-schema-key="location"]').find('.js-lat').val();
   var locationLng = $(event.target).find('[data-schema-key="location"]').find('.js-lng').val();
   var location = [locationLat, locationLng];
 		var website = event.target.website.value;
-  var socialMission = event.target.socialMission.value;
+  var details = event.target.details.value;
 		var userId = Meteor.userId();
 		var createdAt = new Date();
   var captchaData = grecaptcha.getResponse();
 
 
-		Meteor.call("insert", bizName, bizNameUrl, industry, location, website, socialMission, userId, createdAt, captchaData, function(error,result){
+		Meteor.call("insert", bizName, bizNameUrl, keywords, location, website, details, userId, createdAt, captchaData, function(error,result){
      grecaptcha.reset();
      if (error) {
          console.log('There was an error: ' + error.reason);
@@ -138,8 +138,8 @@ Template.createListing.events({
   });
 
 	event.target.bizName.value = "";
-  event.target.industry.value = "";
-  event.target.socialMission.value = "";
+  event.target.keywords.value = "";
+  event.target.details.value = "";
   $(event.target).find('[data-schema-key="logo"]').parent().find('.js-af-remove-file').click();
      
     window.location.href = '../profile/'+bizNameUrl;
@@ -194,7 +194,7 @@ Template.updateListing.events({
   var thisListing = Listings.findOne({_id: thisId});
   var bizName = event.target.bizName.value;
   var bizNameUrl = bizName.replace(/ /g,'-');
-  var industry = event.target.industry.value;
+  var keywords = event.target.keywords.value;
   if($('.location').attr('data', 'clicked')){
    var locationLat = $(event.target).find('[data-schema-key="location"]').find('.js-lat').val();
    var locationLng = $(event.target).find('[data-schema-key="location"]').find('.js-lng').val();
@@ -203,13 +203,13 @@ Template.updateListing.events({
    var location = document.getElementsByClassName('location')[0].innerHTML;
   }
   var website = event.target.website.value;
-  var socialMission = event.target.socialMission.value;
+  var details = event.target.details.value;
   var userId = Meteor.userId();
   var createdAt = new Date();
   var _id = thisListing._id;
 
 
-  Meteor.call("update", _id, bizName, bizNameUrl,industry, location, website, socialMission, userId, function(e,r){
+  Meteor.call("update", _id, bizName, bizNameUrl,keywords, location, website, details, userId, function(e,r){
     if (e) {
         throw new Meteor.Error();
     }

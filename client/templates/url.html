@@ -3,12 +3,13 @@
 	<div id="urlFrameContainer">
 		<div class="topSpacer"></div>
 		<iframe id="urlFrame" src="https://{{url}}"></iframe>
+		<input id="urlName" placeholder="Name this webpage"/>
 		<button id="saveURL" type="submit" class="btn btn-primary">Save</button>
 		{{#if Template.subscriptionsReady}}
 			<div class="comment-section sheerBg">
 			    {{> commentsBox id=urlId }}
 			</div>
 		{{/if}}
-	</div>
+	</div> 
 
 </template>

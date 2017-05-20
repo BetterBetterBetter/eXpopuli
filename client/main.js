@@ -13,7 +13,7 @@ OVERFLOW_SET = new ReactiveVar(false);
 MARKERS = new ReactiveVar();
 PROFILE = new ReactiveVar('');
 KEYWORD = new ReactiveVar();
-ACTIVE_KEYWORDS = new ReactiveVar();
+ACTIVE_KEYWORDS = new ReactiveVar([]);
 CHANGED_KW = new ReactiveVar('');
 KEYWORD_ASSOC = new ReactiveVar([]);
 
@@ -85,7 +85,8 @@ smoothZoom = function (map, max, cnt) {
 
 function MCSet(){
   var map = GoogleMaps.maps.mapPage.instance;
-  var mcOptions = {averageCenter: true, imagePath: "https://betterbetterbetter.org/wp-content/uploads/2017/04/light_"};
+  var mcOptions = {averageCenter: true, imagePath: "https://betterbetterbetter.org/wp-content/uploads/2017/04/light_",
+    ignoreHidden: true};
   mc = new MarkerClusterer(map, markers, mcOptions);
 }
 function toggleBounce(marker) {
@@ -103,9 +104,26 @@ function kwChange(){
   var items = this.items;
   var id = this.$input.attr('id');
   
+  filterMapByKW();
+
 }
 
+function filterMapByKW(){
+  var markers = MARKERS.get();
 
+  markers.forEach(function(marker){
+    marker.setVisible(false);
+    var actKWs = ACTIVE_KEYWORDS.get();
+    actKWs.forEach(function(actKW){
+      if(marker.keywords.includes(actKW)){
+        marker.setVisible(true);
+      }
+    });
+  });
+  setTimeout(function(){
+      mc.repaint();
+  },111);
+}
 
 
 
@@ -301,7 +319,7 @@ function placesAddMarker(location, name, id, types, icon, map) {
       contentString += "    <\/th>";
       contentString += "  <\/tr>";
       contentString += "  <tr>";
-      contentString += "    <td colspan=\"20\" class=\"socialMission\"><div> <a href=\"\/places/"+id+"\" class=\"readmore\">&#xbb;<\/a><\/div><\/td>";
+      contentString += "    <td colspan=\"20\" class=\"details\"><div> <a href=\"\/places/"+id+"\" class=\"readmore\">&#xbb;<\/a><\/div><\/td>";
       contentString += "  <\/tr>";
       contentString += "<\/table>";
 
@@ -337,6 +355,7 @@ function placesAddMarker(location, name, id, types, icon, map) {
       });
       
       marker.placeId = id;
+      marker.keywords = types;
 
       //add click listener
      ['click','touchstart'].forEach(function(e){
@@ -371,11 +390,11 @@ function placesAddMarker(location, name, id, types, icon, map) {
         $('.gm-style-iw').siblings().css("display", "none");
 
         setTimeout(function(){
-          $('.socialMission > div').dotdotdot({
+          $('.details > div').dotdotdot({
            after: "a.readmore"
           });
           setTimeout(function(){
-            $('.socialMission > div').find('iframe').remove();
+            $('.details > div').find('iframe').remove();
            }, 111);
          }, 111);
 
@@ -408,11 +427,11 @@ function placesAddMarker(location, name, id, types, icon, map) {
          $('.gm-style-iw').siblings().css("display", "none");
 
           setTimeout(function(){
-            $('.socialMission > div').dotdotdot({
+            $('.details > div').dotdotdot({
              after: "a.readmore"
             });
             setTimeout(function(){
-              $('.socialMission > div').find('iframe').remove();
+              $('.details > div').find('iframe').remove();
              }, 111);
            }, 111);
           
@@ -449,7 +468,8 @@ function placesAddMarker(location, name, id, types, icon, map) {
      GoogleMaps.maps.mapPage.markers = markers;
      MARKERS.set(markers);
 
-    mcOptions = {averageCenter: true, imagePath: "https://betterbetterbetter.org/wp-content/uploads/2017/04/light_"};
+    mcOptions = {averageCenter: true, imagePath: "https://betterbetterbetter.org/wp-content/uploads/2017/04/light_",
+    ignoreHidden: true};
      mc = new MarkerClusterer(map, markers, mcOptions);
 
 
@@ -578,8 +598,8 @@ Template.layout.helpers({
 
       return {
        backgroundColor: '#333',
-        center: new google.maps.LatLng(40.0202397, -105.0844522),
-        zoom: 2,
+        center: new google.maps.LatLng(36.53019945210711, -98.57413680000003),
+        zoom: 4,
         styles: mapStyle,
         mapTypeId: 'hybrid'
       };
@@ -1096,7 +1116,7 @@ Template.layout.onCreated(function () {
    var markerPosition = getLatLngFromString(locLat, locLng);
 
     var contentString = "<table class=\"listing"+" ";
-    contentString += listing.industry;
+    contentString += listing.keywords;
     contentString += "\">";
     contentString += "  <colgroup>";
     contentString += "    <col width=\"5%\"><col width=\"5%\">";
@@ -1115,7 +1135,7 @@ Template.layout.onCreated(function () {
     contentString += "    <\/th>";
     contentString += "  <\/tr>";
     contentString += "  <tr>";
-    contentString += "    <td colspan=\"20\" class=\"socialMission\"><div>"+listing.socialMission+" <a href=\"\/profile\/"+listing.bizNameUrl+"\" class=\"readmore\">&#xbb;<\/a><\/div><\/td>";
+    contentString += "    <td colspan=\"20\" class=\"details\"><div>"+listing.details+" <a href=\"\/profile\/"+listing.bizNameUrl+"\" class=\"readmore\">&#xbb;<\/a><\/div><\/td>";
     contentString += "  <\/tr>";
     contentString += "<\/table>";
 
@@ -1137,6 +1157,7 @@ Template.layout.onCreated(function () {
 
 
    marker.bizNameUrl = listing.bizNameUrl;
+   marker.keywords = listing.keywords;
 
    map.instance.addListener('zoom_changed', function() {
      $('.gm-style-iw').siblings().css("display", "none");
@@ -1177,11 +1198,11 @@ Template.layout.onCreated(function () {
       $('.gm-style-iw').siblings().css("display", "none");
 
       setTimeout(function(){
-        $('.socialMission > div').dotdotdot({
+        $('.details > div').dotdotdot({
          after: "a.readmore"
         });
         setTimeout(function(){
-          $('.socialMission > div').find('iframe').remove();
+          $('.details > div').find('iframe').remove();
          }, 111);
        }, 111);
 
@@ -1213,11 +1234,11 @@ Template.layout.onCreated(function () {
        $('.gm-style-iw').siblings().css("display", "none");
 
         setTimeout(function(){
-          $('.socialMission > div').dotdotdot({
+          $('.details > div').dotdotdot({
            after: "a.readmore"
           });
           setTimeout(function(){
-            $('.socialMission > div').find('iframe').remove();
+            $('.details > div').find('iframe').remove();
            }, 111);
          }, 111);
 
@@ -1261,7 +1282,10 @@ Template.layout.onCreated(function () {
 
   });
 
-  mcOptions = {averageCenter: true, imagePath: "https://betterbetterbetter.org/wp-content/uploads/2017/04/light_"};
+  mcOptions = {
+    averageCenter: true, 
+    imagePath: "https://betterbetterbetter.org/wp-content/uploads/2017/04/light_",
+    ignoreHidden: true};
    mc = new MarkerClusterer(map.instance, markers, mcOptions);
 
 
@@ -1269,6 +1293,7 @@ Template.layout.onCreated(function () {
   var infoWindow = new google.maps.InfoWindow({map: map.instance});
 
 
+  setTimeout(filterMapByKW,333);
 
 
 
@@ -1294,7 +1319,6 @@ Template.layout.onCreated(function () {
       setTimeout(function(){
         var map = GoogleMaps.maps.mapPage.instance;
         map.panTo(pos);
-        smoothZoom(map, 19, map.getZoom());
       }, 1111);
 
 
@@ -1400,18 +1424,38 @@ Template.layout.events({
 
     var bizName = document.getElementById('name').innerHTML;
     var bizNameUrl = bizName.replace(/ /g,'-');
-    var industry = document.getElementById('types').innerHTML;
+    var keywordsStr = document.getElementById('types').innerHTML;
+    var keywords = keywordsStr.split(',');
     var locRaw = document.getElementById('location').innerHTML.replace("(","").replace(")","").replace(" ","").split(',');
     var locationLat = locRaw[0];
     var locationLng = locRaw[1];
     var location = [locationLat, locationLng];
     var website = document.getElementById('website').innerHTML;
-    var socialMission = "";
+    var details = "";
     var userId = Meteor.userId();
     var createdAt = new Date();
 
+    //add new keywords
+    keywords.forEach(function(kw_candidate){
+      var allKW_db = Keywords.find();
+      var isInKWs = false;
+      allKW_db.forEach(function(kw){
+          if (kw===kw_candidate) {
+              isInKWs = true;
+          }
+      });
+      if(!isInKWs){
+        var preceding = [];
+        var proceeding = []; 
+        var type = 'generic';
+        var userId = Meteor.userId();
+        var createdAt = new Date();
+        Meteor.call("addKeyword", kw_candidate, preceding, proceeding, type, userId, createdAt);
+      }
 
-    Meteor.call("insertInsecure", bizName, bizNameUrl, industry, location, website, socialMission, userId, createdAt);
+    });
+
+    Meteor.call("insertInsecure", bizName, bizNameUrl, keywords, location, website, details, userId, createdAt);
 
     Router.go('profile', { bizNameUrl: bizNameUrl });
 
@@ -1655,7 +1699,20 @@ Template.layout.events({
 
     window.history.back();
 
-  }
+  },
+  'click #AND_i': function(e){
+    $("#top_kw_cont i").each(function(){
+      $(this).removeClass('active');
+    });
+    $(e.target).addClass('active');
+  },
+  'click #OR_i': function(e){
+    $("#top_kw_cont i").each(function(){
+      $(this).removeClass('active');
+    });
+    $(e.target).addClass('active');
+
+  } 
   /*
   'click #urlbar_i': function(e){
 
@@ -1746,6 +1803,15 @@ Template.keywordsManager.events({
         currentKeyword.preceding = currentKeyword.preceding.filter(e => e !== removedAssoc);
       }
     }    
+  },
+  'click #newKeyword': function(e){
+    var kw = $('#newKW_input').val();
+    var preceding = [];
+    var proceeding = []; 
+    var type = 'generic';
+    var userId = Meteor.userId();
+    var createdAt = new Date();
+    Meteor.call("addKeyword", kw, preceding, proceeding, type, userId, createdAt);
   }
 
 });
@@ -1792,6 +1858,35 @@ Template.matchingList.events({
   }
 
 });
+
+
+Template.urlFrame.events({
+
+  'click #saveURL': function(e, template){
+
+    var name = $('#urlName').val();
+    var url = $('#urlFrame').attr('src');
+    var keywords = [];
+    var userId = Meteor.userId();
+    var createdAt = new Date();
+debugger;
+    Meteor.call('addUrl', name, url, keywords, userId, createdAt);
+  }
+
+});
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -1919,6 +2014,7 @@ Template.layout.onRendered(function(){
             tagType: "TAG_SELECT",
             onChange: kwChange,
             onItemAdd: function(value, $item) {
+              var option = $('#top_kw_cont i.active').html();
               var allKWs = Keywords.find();
               var $select = $('#kw_tier1').selectize();
               var selectize = $select[0].selectize;
@@ -1940,13 +2036,17 @@ Template.layout.onRendered(function(){
               var actKwArr = ACTIVE_KEYWORDS.get();
               var addedKW = Keywords.findOne({keyword: value });
              CHANGED_KW.set(addedKW);
-
+             if(option==="AND"){
               allKWs.forEach( function(kw, i) {
 
                 if(!actKwArr.includes(kw.keyword)){
 
                   var addedKw = CHANGED_KW.get();
-                  var proceeding = addedKw.proceeding;
+                  if(!addedKw){
+                    var proceeding = [];
+                  }else{
+                    var proceeding = addedKw.proceeding;
+                  }
 
                   if(!proceeding.includes(kw.keyword)){
                     
@@ -1956,99 +2056,70 @@ Template.layout.onRendered(function(){
                 }
 
               });
+             }
             },
             onItemRemove: function(value){
 
-
+              var option = $('#top_kw_cont i.active').html();
               var $select = $('#kw_tier1').selectize();
               var selectize = $select[0].selectize;
               var allKWs = Keywords.find(); 
               
-              var actKwArr = ACTIVE_KEYWORDS.get();
-              var upActArr = actKwArr.filter(function(e) { return e !== value });
-              ACTIVE_KEYWORDS.set(upActArr);
+              if(option==="AND"){
+                var actKwArr = ACTIVE_KEYWORDS.get();
+                var upActArr = actKwArr.filter(function(e) { return e !== value });
+                ACTIVE_KEYWORDS.set(upActArr);
 
-              var rmKw = Keywords.findOne({keyword: value });
-              CHANGED_KW.set(rmKw);
+                var rmKw = Keywords.findOne({keyword: value });
+                CHANGED_KW.set(rmKw);
 
-              if(!upActArr.length){ 
-                allKWs.forEach( function(kw, i) {
-                  //add all Kw options
-                  selectize.addOption({
-                      text: kw.keyword,
-                      value: kw.keyword
-                    });
-                });                
-              }else{
-
-                var lastActKw = upActArr[upActArr.length-1];
-                var lastActKwCursor = Keywords.findOne({keyword: lastActKw });
-                var lastPro = lastActKwCursor.proceeding;
-
-                allKWs.forEach( function(kw, i) { 
-                  if(!upActArr.includes(kw.keyword)){
+                if(!upActArr.length){ 
+                  allKWs.forEach( function(kw, i) {
+                    //add all Kw options
                     selectize.addOption({
-                      text: kw.keyword,
-                      value: kw.keyword
-                    });
+                        text: kw.keyword,
+                        value: kw.keyword
+                      });
+                  });                
+                }else{
 
-                    if(!lastPro.includes(kw.keyword)){
-                      selectize.removeOption(kw.keyword);
-                      selectize.refreshOptions() 
+                  var lastActKw = upActArr[upActArr.length-1];
+                  var lastActKwCursor = Keywords.findOne({keyword: lastActKw });
+                  var lastPro = lastActKwCursor.proceeding;
+
+                  allKWs.forEach( function(kw, i) { 
+                    if(!upActArr.includes(kw.keyword)){
+                      selectize.addOption({
+                        text: kw.keyword,
+                        value: kw.keyword
+                      });
+
+                      if(!lastPro.includes(kw.keyword)){
+                        selectize.removeOption(kw.keyword);
+                        selectize.refreshOptions() 
+                      }
                     }
-                  }
 
+                  });
+                }
+              }else{
+                allKWs.forEach( function(kw, i) {
+                  selectize.addOption({
+                    text: kw.keyword,
+                    value: kw.keyword
+                  });
                 });
+                selectize.refreshOptions(); 
               }
+
             },
             create: function(input) {
-              var path = input;
+              var preceding = [];
+              var proceeding = [];
+              var type = 'generic';
               var userId = Meteor.userId();
               var createdAt = new Date();
-              Meteor.call("addKeyword", input, 1, path, userId, createdAt);
-              return {
-                  value: input,
-                  text: input
-              };
-            },
-            plugins: ['restore_on_backspace', 'remove_button']});
-          $('#kw_tier2').selectize({
-            maxItems: 1,
-            onChange: kwChange,
-            create: function(input) {
-              var pathName = [];
-              var t1 = $('#kw_tier1').val();
-              /*t1.forEach(function(e){
-                var pa = e+"/";
-                pathName.push(pa);
-              });
-              debugger;
-              */
-              var path = t1[0]+'/'+input;
-              var userId = Meteor.userId();
-              var createdAt = new Date();
-              Meteor.call("addKeyword", input, 2, path, userId, createdAt);              
-              return {
-                  value: input,
-                  text: input
-              };
-            },
-            plugins: ['restore_on_backspace', 'remove_button']}); 
-          $('#kw_tier3').selectize({
-            maxItems: 1,
-            onChange: kwChange,
-            create: function(input) {
-              var t1 = $('#kw_tier1').val();
-              var t2 = $('#kw_tier2').val();
-              /*t1.forEach(function(e){
-                var pa = e+"/";
-                pathName.push(pa);
-              });
-              */
-              var path = t1[0]+'/'+t2[0]+'/'+input;
-              var userId = Meteor.userId();
-              var createdAt = new Date();
-              Meteor.call("addKeyword", input, 3, path, userId, createdAt);  
+              Meteor.call("addKeyword", input, preceding, proceeding, type, userId, createdAt);
               return {
                   value: input,
                   text: input
@@ -2083,9 +2154,7 @@ Template.layout.onRendered(function(){
       setTimeout(SelectiveKW,333); 
 
 
-  });
-
-
+  });//on Ready
 });
 
 
@@ -2111,6 +2180,26 @@ Template.register.events({
 });
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 ////// Resize Time!
 $(window).resize(function(){
 
@@ -2126,11 +2215,11 @@ $(window).resize(function(){
 
 
   setTimeout(function(){
-    $('.socialMission > div').dotdotdot({
+    $('.details > div').dotdotdot({
      after: "a.readmore"
     });
     setTimeout(function(){
-      $('.socialMission > div').find('iframe').remove();
+      $('.details > div').find('iframe').remove();
      }, 111);
    }, 111);
 

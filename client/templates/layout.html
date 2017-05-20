@@ -24,13 +24,17 @@
 	</div>
 
 	{{#if Template.subscriptionsReady}}
-	  <select id="kw_tier1"  name="kw1[]" multiple class="controlMenu searchbar kw1" placeholder="Keyword filter...">
-			{{#each keywords}}
-				{{#if inPathName}}
-					<option value="{{keyword}}">{{keyword}}</option>
-				{{/if}}
-			{{/each}}
-		</select>
+		<div id="top_kw_cont">
+		  <select id="kw_tier1"  name="kw1[]" multiple class="controlMenu searchbar kw1" placeholder="Keyword filter...">
+				{{#each keywords}}
+					{{#if inPathName}}
+						<option value="{{keyword}}">{{keyword}}</option>
+					{{/if}}
+				{{/each}}
+			</select>
+			<i id="AND_i" class="active">AND</i>
+			<i id="OR_i">OR</i>
+		</div>
   {{/if}}
 
 	<div id="footer">

@@ -21,6 +21,7 @@ a
 	
 input
  autofill(green, white)
+ color #222
 form .field.error
  field-error()
 form .field.success
@@ -145,6 +146,7 @@ ul li
  	left 33%
  	
 #urlFrame
+	ratio-box(16/9)
 	width 100%
 	height 25em
 	height 70vh
@@ -392,7 +394,7 @@ li
  & *
  	min-width 5em
  	max-width 30em
-	.socialMission
+	.details
 		font-size 1em
 		max-height 3em
 		max-width 5em
@@ -807,9 +809,6 @@ div.loaderScreen
  z-index 9
  position fixed
  &#kw_tier1
- 	width 40%
- 	top 8%
-  right 3%
   color #000
 		box-shadow #777 2px 2px 2px
 	 
@@ -835,11 +834,7 @@ div.loaderScreen
  &.active
 		background #000
 
-.kw1,.kw2,.kw3
- width 75%
- padding-left 2.5%
- padding-right 2.5%
- top 0
+.kw1
  text-align center
 	.selectize-input
 		background rgba(250,250,250,.25)
@@ -849,14 +844,6 @@ div.loaderScreen
 		transition 333ms all ease
 		&:hover
 		 background rgba(250,250,250,.75)
-
-.kw1
-	left 12.5%
-.kw2
-	left 37.5%
-.kw3
-	left 62.5%
-
 
 
 .selectize-input.items
@@ -877,8 +864,8 @@ div.loaderScreen
 	z-index 99
 
 main
-	top 5%
-	max-height 80%
+	top 10%
+	max-height 75%
  position absolute
  overflow auto
  margin-left 17%
@@ -935,7 +922,7 @@ i
 		top 2%!important
 		right 3%!important	
  transition 666ms all ease-in-out
-	top 2%!important
+	top 7.5%!important
 	right 17%!important
 	z-index 999
 	height 20px
@@ -956,7 +943,7 @@ i
 	&#close_main
 		color #b22222
 #back_cont, #back_i
-	top 3%
+	top 7.5%
 	left 15% 
 
 
@@ -1111,3 +1098,44 @@ div.line
 	&:hover,&:active
 		color #f30000
 		font-size 2em
+		
+
+.kw1 .selectize-input.items.has-options.has-items
+	text-align left
+	
+#top_kw_cont
+	display flex
+	justify-content space-around
+ width 75%
+ height 8%
+ padding-left 2.5%
+ padding-right 2.5%
+ top 0
+ transition 666ms all ease-in-out
+	position absolute
+	left 12.5%
+	right 12.5%
+	background rgba(211,211,211,.6)
+	box-shadow rgba(211,211,211,.66) 0 0 3px, rgba(211,211,211,.66) 0 0 6px, rgba(211,211,211,.66) 0 0 9px
+
+
+	&:hover
+		background rgba(211,211,211,.8)
+	&	> *
+		position relative
+		display inline-flex
+		padding-top 1.75%
+		padding-bottom 1.75%
+	.kw1
+		width 80%
+	i
+		transition 666ms all ease-in-out	
+		&.active
+			transition 666ms all ease-in-out
+			color green!important
+			
+#newKW_input
+	text-align center
+	
+select.ui.dropdown
+	color #333!important

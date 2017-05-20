@@ -123,7 +123,7 @@ Keywords.allow({
 
 Meteor.methods({
 
- insert: function (bizName, bizNameUrl, industry, location, website, socialMission, userId, createdAt, captchaData){
+ insert: function (bizName, bizNameUrl, keywords, location, website, details, userId, createdAt, captchaData){
 
    var self = this;
 
@@ -141,24 +141,24 @@ Meteor.methods({
    bizName: bizName,
    bizNameUrl: bizNameUrl,
    website: website,
-   industry: industry,
+   keywords: keywords,
    location: location,
-   socialMission: socialMission,
+   details: details,
    userId: userId,
    createdAt: new Date()
   });
 
  },
-  insertInsecure: function (bizName, bizNameUrl, industry, location, website, socialMission, userId, createdAt){
+  insertInsecure: function (bizName, bizNameUrl, keywords, location, website, details, userId, createdAt){
 
 
   Listings.insert({
    bizName: bizName,
    bizNameUrl: bizNameUrl,
    website: website,
-   industry: industry,
+   keywords: keywords,
    location: location,
-   socialMission: socialMission,
+   details: details,
    userId: userId,
    createdAt: new Date()
   });
@@ -179,6 +179,12 @@ Meteor.methods({
 
 addKeyword: function (keyword, pre, pro, tier, path, userId, createdAt){
 
+  if(!createdAt){
+    var created = new Date();
+  }else{
+    var created = createdAt;
+  }
+
   Keywords.insert({
    keyword: keyword, 
    preceding: pre,
@@ -186,10 +192,29 @@ addKeyword: function (keyword, pre, pro, tier, path, userId, createdAt){
    tier: tier, 
    path: path,
    userId: userId,
-   createdAt: createdAt
+   createdAt: created
+  });
+
+ },
+
+ addUrl: function (name, url, keywords, userId, createdAt){
+
+  if(!createdAt){
+    var created = new Date();
+  }else{
+    var created = createdAt;
+  }
+
+  Keywords.insert({
+   name: name,
+   url: url,
+   keywords: keywords, 
+   userId: userId,
+   createdAt: created
   });
 
  }
+ 
  
 
 

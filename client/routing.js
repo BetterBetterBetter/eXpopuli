@@ -1,7 +1,7 @@
 Router.configure({
 	layoutTemplate:'layout',
-	notFoundTemplate: 'loader',
-	loadingTemplate: 'loader',
+	//notFoundTemplate: 'loader',
+	//loadingTemplate: 'loader',
 	trackPageView: true
 });
 
